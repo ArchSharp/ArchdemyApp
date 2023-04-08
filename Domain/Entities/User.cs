@@ -23,6 +23,7 @@ namespace Domain.Entities
         public string Country { get; set; }
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
+        public bool EmailConfirmed { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow.ToUniversalTime();
         public DateTime? UpdatedAt { get; set; } = DateTime.Now.ToUniversalTime();
 

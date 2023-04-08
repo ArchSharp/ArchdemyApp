@@ -26,6 +26,11 @@ namespace Application.Services.Implementations
 
         public async Task<SuccessResponse<CreateUserDto>> CreateUser(CreateUserDto model)
         {
+            var findUser = await _userRepository.FirstOrDefault(x => x.Email == model.Email);
+
+            if (findUser != null)
+                throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserAlreadyExist);
+
             var newUser = _mapper.Map<User>(model);
 
             await _userRepository.AddAsync(newUser);
@@ -35,10 +40,43 @@ namespace Application.Services.Implementations
 
             return new SuccessResponse<CreateUserDto>
             {
-                Data= newUserResponse,
+                Data = newUserResponse,
                 code = 201,
                 Message = ResponseMessages.NewUserCreated,
                 ExtraInfo = "",                
+            };
+        }
+
+        public async Task<SuccessResponse<ForgotPasswordDto>> ForgotPassword(ForgotPasswordDto model)
+        {
+            var findUser = await _userRepository.FirstOrDefault(x => x.Email == model.Email);
+
+            if (findUser == null)
+                throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserNotFound);
+
+            return new SuccessResponse<ForgotPasswordDto>
+            {
+                code = 201,
+                Message = ResponseMessages.ForgotPasswordLinkSent,
+                ExtraInfo = "",
+            };
+        }
+
+        public async Task<SuccessResponse<CreateUserDto>> LoginUser(LoginUserDto model)
+        {
+            var findUser = await _userRepository.FirstOrDefault(x=>x.Email== model.Email);
+
+            if (findUser == null)
+                throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserNotFound);
+
+            var userResponse = _mapper.Map<CreateUserDto>(findUser);
+
+            return new SuccessResponse<CreateUserDto>
+            {
+                Data = userResponse,
+                code = 200,
+                Message = ResponseMessages.LoginSuccessful,
+                ExtraInfo = "",
             };
         }
     }

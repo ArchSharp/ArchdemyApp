@@ -1,11 +1,12 @@
-﻿
-using API.Middlewares;
+﻿using API.Middlewares;
 using Application.Mapper;
+using Application.Services.Implementations;
 using FluentValidation.AspNetCore;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ShareLoanApp.Application.Services.Interfaces;
 
 namespace API.DI
 {
@@ -36,6 +37,11 @@ namespace API.DI
                     // .UseSqlServer(constring));
                     .UseNpgsql(constring));
                     
+        }
+
+        public static void ConfigureLoggerService(this IServiceCollection services)
+        {
+            services.AddScoped<ILoggerManager, LoggerManager>();
         }
     }
 }

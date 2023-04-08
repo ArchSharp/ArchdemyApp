@@ -19,4 +19,15 @@ namespace Application.DTOs
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
     }
+
+    public class LoginUserDto
+    {
+        public string Email { get; set;}
+        public string Password { get; set;}
+    }
+
+    public class ForgotPasswordDto
+    {
+        public string Email { get; set;}
+    }
 }

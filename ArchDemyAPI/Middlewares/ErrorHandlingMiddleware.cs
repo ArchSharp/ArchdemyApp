@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Newtonsoft.Json.Serialization;
 
-namespace ShareLoanApp.API.Middlewares
+namespace API.Middlewares
 {
     public class ErrorHandlingMiddleware
     {

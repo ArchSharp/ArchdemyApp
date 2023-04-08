@@ -11,5 +11,7 @@ namespace Application.Services.Interfaces
     public interface IUserService : IAutoDependencyService
     {
         Task<SuccessResponse<CreateUserDto>> CreateUser(CreateUserDto model);
+        Task<SuccessResponse<CreateUserDto>> LoginUser(LoginUserDto model);
+        Task<SuccessResponse<ForgotPasswordDto>> ForgotPassword(ForgotPasswordDto model);
     }
 }

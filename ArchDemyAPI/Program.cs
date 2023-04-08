@@ -9,6 +9,7 @@ using Infrastructure.Data;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacContainerModule()));
-//builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureMvc();//register automapper
 builder.Services.ConfigureSqlContext(builder.Configuration);//add database
 
@@ -34,6 +35,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseErrorHandler();
 
 app.UseHttpsRedirection();
 
