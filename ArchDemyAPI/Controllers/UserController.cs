@@ -7,7 +7,7 @@ namespace API.Controllers
 {
     [ApiController]
     [ApiVersion("1.0")]
-    [Route("api/auth")]
+    [Route("api/Auth")]
     public class UserController : Controller
     {
         private readonly IUserService _userService;

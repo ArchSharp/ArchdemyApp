@@ -13,5 +13,8 @@ namespace Domain.Common
         public const string UserNotFound = "User not found";
         public const string UserAlreadyExist = "User already exist";
         public const string ForgotPasswordLinkSent = "Forgot password link has been sent to your email";
+        public const string NewCourseCreated = "Course created successfully";
+        public const string CourseNotFound = "Course with this id cannot be found";
+        public const string CourseFetchedSuccesss = "Course fetched successfully";
     }
 }
