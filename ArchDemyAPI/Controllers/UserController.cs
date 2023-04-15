@@ -23,7 +23,7 @@ namespace API.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost()]
-        [Route("NewUser")]
+        [Route("Register")]
         [ProducesResponseType(typeof(SuccessResponse<CreateUserDto>), 200)]
         public async Task<IActionResult> CreateUser(CreateUserDto model)
         {
@@ -38,7 +38,7 @@ namespace API.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost()]
-        [Route("LoginUser")]
+        [Route("Login")]
         [ProducesResponseType(typeof(SuccessResponse<CreateUserDto>), 200)]
         public async Task<IActionResult> LoginUser([FromBody]LoginUserDto model)
         {

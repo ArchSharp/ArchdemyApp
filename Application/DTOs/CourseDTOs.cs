@@ -8,16 +8,16 @@ namespace Application.DTOs
 {
     public class CreateCourseDto
     {
-        public string ownerId { get; set; }
-        public string categoryId { get; set; }
-        public bool isPremium { get; set; }
-        public string instructor { get; set; }
-        public double cost { get; set; }
-        public string title { get; set; }
-        public string image { get; set; }
-        public int purchaseNumber { get; set; }
-        public int modulesNumber { get; set; }
-        public int contentVolume { get; set; }
+        public string Author { get; set; }
+        public string AuthorId { get; set; }
+        public string CategoryId { get; set; }
+        public bool IsPremium { get; set; }
+        public double Cost { get; set; }
+        public string Title { get; set; }
+        public string Image { get; set; }
+        public int PurchaseNumber { get; set; }
+        public int ModulesNumber { get; set; }
+        public int ContentVolume { get; set; }
     }
 
     public class GetCourseDto : CreateCourseDto
@@ -28,5 +28,10 @@ namespace Application.DTOs
     public class CategoryCoursesDto : CreateCourseDto
     {
     
+    }
+
+    public class UpdateCourseDto : CreateCourseDto
+    {
+        public Guid CourseId { get; set; }
     }
 }

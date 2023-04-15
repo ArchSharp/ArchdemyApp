@@ -13,8 +13,7 @@ namespace Application.Mapper
     {
         public CourseModuleMapper() { 
             CreateMap<CourseModule, CourseModuleDtos>().ReverseMap();            
-            CreateMap<EachModule, EachModuleDto>().ReverseMap();
-            CreateMap<CourseUrl, CourseUrlDto>().ReverseMap();
+            CreateMap<Topic, TopicDto>().ReverseMap();
         }
     }
 }

@@ -11,5 +11,6 @@ namespace Application.Services.Interfaces
     public interface ICourseModules : IAutoDependencyService
     {
         Task<SuccessResponse<CourseModuleDtos>> CreateCourseModule(CourseModuleDtos model);
+        Task<SuccessResponse<CourseModuleDtos>> UpdateCourseModule(CourseModuleDtos model);
     }
 }

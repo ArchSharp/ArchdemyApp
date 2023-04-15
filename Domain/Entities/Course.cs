@@ -12,17 +12,18 @@ namespace Domain.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid courseId { get; set; }
-        public string ownerId { get; set; }
-        public string categoryId { get; set; }
-        public bool isPremium { get; set; }
-        public string instructor { get; set; }
-        public double cost { get; set; }
-        public string title { get; set; }
-        public string image {get; set; }
-        public int purchaseNumber { get; set; }
-        public int modulesNumber { get; set; }
-        public int contentVolume { get; set; }
+        public Guid CourseId { get; set; }        
+        public string AuthorId { get; set; }        
+        public string CategoryId { get; set; }
+        public string Author { get; set; }
+        public bool IsPremium { get; set; }
+        public double Cost { get; set; }
+        public string Title { get; set; }
+        public string Image {get; set; }
+        public int PurchaseNumber { get; set; }
+        public int ModulesNumber { get; set; }
+        public int ContentVolume { get; set; }
+        public ICollection<CourseModule> CourseModules { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow.ToUniversalTime();
         public DateTime? UpdatedAt { get; set; } = DateTime.Now.ToUniversalTime();
     }

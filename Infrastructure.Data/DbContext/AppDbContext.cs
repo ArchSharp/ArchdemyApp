@@ -18,13 +18,14 @@ namespace Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CourseModule>()
-                .HasMany(a => a.courseModules)
-                .WithOne(b => b.CourseModule);
-                //.HasForeignKey(b => b.courseId);
+                .HasMany(a => a.Topics);
+            //.HasForeignKey(b => b.courseId);
+            modelBuilder.Entity<Course>()
+                .HasMany(a => a.CourseModules);
 
-            modelBuilder.Entity<EachModule>()
+            /*modelBuilder.Entity<Topic>()
                 .HasMany(b => b.urls)
-                .WithOne(c => c.EachModule);
+                .WithOne(c => c.EachModule);*/
                 //.HasForeignKey(c => c.courseId);
                 
             base.OnModelCreating(modelBuilder);

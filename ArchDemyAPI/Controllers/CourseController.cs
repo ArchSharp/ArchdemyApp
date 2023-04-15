@@ -23,7 +23,7 @@ namespace API.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost()]
-        [Route("NewCourse")]
+        [Route("New")]
         [ProducesResponseType(typeof(SuccessResponse<CreateCourseDto>), 200)]
         public async Task<IActionResult> CreateCourse([FromBody]CreateCourseDto model)
         {
@@ -38,7 +38,7 @@ namespace API.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet()]
-        [Route("GetCourseByCourseId")]
+        [Route("GetCourseById")]
         [ProducesResponseType(typeof(SuccessResponse<GetCourseDto>), 200)]
         public async Task<IActionResult> GetCourseByCourseId([FromQuery] Guid id)
         {
@@ -55,9 +55,39 @@ namespace API.Controllers
         [HttpGet()]
         [Route("GetCourseByCategoryId")]
         [ProducesResponseType(typeof(SuccessResponse<ICollection<CategoryCoursesDto>>), 200)]
-        public async Task<IActionResult> GetCoursesByCategoryId([FromQuery] string catId)
+        public async Task<IActionResult> GetCoursesByCategoryId([FromQuery] string CategoryId)
         {
-            var response = await _courseService.GetCoursesByCategoryId(catId);
+            var response = await _courseService.GetCoursesByCategoryId(CategoryId);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Endpoint to get all course
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpGet()]
+        [Route("GetAllCourses")]
+        [ProducesResponseType(typeof(SuccessResponse<ICollection<GetCourseDto>>), 201)]
+        public async Task<IActionResult> GetAllCourses()
+        {
+            var response = await _courseService.GetAllCourses();
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Endpoint to update course
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut()]
+        [Route("Update")]
+        [ProducesResponseType(typeof(SuccessResponse<UpdateCourseDto>), 200)]
+        public async Task<IActionResult> UpdateCourse([FromBody]UpdateCourseDto model)
+        {
+            var response = await _courseService.UpdateCourse(model);
 
             return Ok(response);
         }

@@ -15,6 +15,8 @@ namespace Domain.Common
         public const string ForgotPasswordLinkSent = "Forgot password link has been sent to your email";
         public const string NewCourseCreated = "Course created successfully";
         public const string CourseNotFound = "Course with this id cannot be found";
+        public const string CourseUpdated = "Course updated successfully";
         public const string CourseFetchedSuccesss = "Course fetched successfully";
+        public const string CourseModuleNotFound = "Course module not found";
     }
 }

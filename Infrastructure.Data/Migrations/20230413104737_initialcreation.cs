@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreation : Migration
+    public partial class initialcreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,34 +15,23 @@ namespace Infrastructure.Data.Migrations
                 name: "Courses",
                 columns: table => new
                 {
-                    courseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ownerId = table.Column<string>(type: "text", nullable: false),
-                    categoryId = table.Column<string>(type: "text", nullable: false),
-                    isPremium = table.Column<bool>(type: "boolean", nullable: false),
-                    instructor = table.Column<string>(type: "text", nullable: false),
-                    cost = table.Column<double>(type: "double precision", nullable: false),
-                    title = table.Column<string>(type: "text", nullable: false),
-                    image = table.Column<string>(type: "text", nullable: false),
-                    purchaseNumber = table.Column<int>(type: "integer", nullable: false),
-                    modulesNumber = table.Column<int>(type: "integer", nullable: false),
-                    contentVolume = table.Column<int>(type: "integer", nullable: false),
+                    CourseId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Author = table.Column<string>(type: "text", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsPremium = table.Column<bool>(type: "boolean", nullable: false),
+                    Cost = table.Column<double>(type: "double precision", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Image = table.Column<string>(type: "text", nullable: false),
+                    PurchaseNumber = table.Column<int>(type: "integer", nullable: false),
+                    ModulesNumber = table.Column<int>(type: "integer", nullable: false),
+                    ContentVolume = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Courses", x => x.courseId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CoursesModules",
-                columns: table => new
-                {
-                    courseId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CoursesModules", x => x.courseId);
+                    table.PrimaryKey("PK_Courses", x => x.CourseId);
                 });
 
             migrationBuilder.CreateTable(
@@ -70,73 +59,70 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EachModule",
+                name: "CoursesModules",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    courseTitle = table.Column<string>(type: "text", nullable: false),
-                    courseId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CourseId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EachModule", x => x.id);
+                    table.PrimaryKey("PK_CoursesModules", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EachModule_CoursesModules_courseId",
-                        column: x => x.courseId,
-                        principalTable: "CoursesModules",
-                        principalColumn: "courseId",
+                        name: "FK_CoursesModules_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseUrl",
+                name: "Topic",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    title = table.Column<string>(type: "text", nullable: false),
-                    url = table.Column<string>(type: "text", nullable: false),
-                    EachModuleid = table.Column<Guid>(type: "uuid", nullable: false),
-                    courseId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Author = table.Column<string>(type: "text", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: false),
+                    CourseModuleId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseUrl", x => x.id);
+                    table.PrimaryKey("PK_Topic", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CourseUrl_EachModule_EachModuleid",
-                        column: x => x.EachModuleid,
-                        principalTable: "EachModule",
-                        principalColumn: "id",
+                        name: "FK_Topic_CoursesModules_CourseModuleId",
+                        column: x => x.CourseModuleId,
+                        principalTable: "CoursesModules",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseUrl_EachModuleid",
-                table: "CourseUrl",
-                column: "EachModuleid");
+                name: "IX_CoursesModules_CourseId",
+                table: "CoursesModules",
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EachModule_courseId",
-                table: "EachModule",
-                column: "courseId");
+                name: "IX_Topic_CourseModuleId",
+                table: "Topic",
+                column: "CourseModuleId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Courses");
-
-            migrationBuilder.DropTable(
-                name: "CourseUrl");
+                name: "Topic");
 
             migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "EachModule");
+                name: "CoursesModules");
 
             migrationBuilder.DropTable(
-                name: "CoursesModules");
+                name: "Courses");
         }
     }
 }

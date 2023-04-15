@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230412032458_initialCreation")]
-    partial class initialCreation
+    [Migration("20230413104737_initialcreation")]
+    partial class initialcreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,112 +27,100 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.Course", b =>
                 {
-                    b.Property<Guid>("courseId")
+                    b.Property<Guid>("CourseId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ContentVolume")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsPremium")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ModulesNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PurchaseNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("categoryId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("contentVolume")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("cost")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("image")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("instructor")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("isPremium")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("modulesNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ownerId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("purchaseNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("courseId");
+                    b.HasKey("CourseId");
 
                     b.ToTable("Courses");
                 });
 
             modelBuilder.Entity("Domain.Entities.CourseModule", b =>
                 {
-                    b.Property<Guid>("courseId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.HasKey("courseId");
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
 
                     b.ToTable("CoursesModules");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CourseUrl", b =>
+            modelBuilder.Entity("Domain.Entities.Topic", b =>
                 {
-                    b.Property<Guid>("id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("EachModuleid")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("courseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("title")
+                    b.Property<string>("Author")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("url")
+                    b.Property<Guid>("CourseModuleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("id");
-
-                    b.HasIndex("EachModuleid");
-
-                    b.ToTable("CourseUrl");
-                });
-
-            modelBuilder.Entity("Domain.Entities.EachModule", b =>
-                {
-                    b.Property<Guid>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("courseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("courseTitle")
+                    b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.HasIndex("courseId");
+                    b.HasIndex("CourseModuleId");
 
-                    b.ToTable("EachModule");
+                    b.ToTable("Topic");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -195,36 +183,36 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CourseUrl", b =>
+            modelBuilder.Entity("Domain.Entities.CourseModule", b =>
                 {
-                    b.HasOne("Domain.Entities.EachModule", "EachModule")
-                        .WithMany("urls")
-                        .HasForeignKey("EachModuleid")
+                    b.HasOne("Domain.Entities.Course", "Course")
+                        .WithMany("CourseModules")
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("EachModule");
+                    b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("Domain.Entities.EachModule", b =>
+            modelBuilder.Entity("Domain.Entities.Topic", b =>
                 {
                     b.HasOne("Domain.Entities.CourseModule", "CourseModule")
-                        .WithMany("courseModules")
-                        .HasForeignKey("courseId")
+                        .WithMany("Topics")
+                        .HasForeignKey("CourseModuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CourseModule");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CourseModule", b =>
+            modelBuilder.Entity("Domain.Entities.Course", b =>
                 {
-                    b.Navigation("courseModules");
+                    b.Navigation("CourseModules");
                 });
 
-            modelBuilder.Entity("Domain.Entities.EachModule", b =>
+            modelBuilder.Entity("Domain.Entities.CourseModule", b =>
                 {
-                    b.Navigation("urls");
+                    b.Navigation("Topics");
                 });
 #pragma warning restore 612, 618
         }

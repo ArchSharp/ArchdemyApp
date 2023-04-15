@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,25 +10,18 @@ namespace Application.DTOs
 {
     public class CourseModuleDtos 
     {
-        [Key]
-        public Guid courseId { get; set; }
-        public ICollection<EachModuleDto> courseModules { get; set; }
+        public Guid Id { get; set; }
+        public Guid CourseId { get; set; }
+        public string Name { get; set; }
+        public ICollection<TopicDto> Topics { get; set; }
     }
 
-    public class EachModuleDto
+    public class TopicDto
     {
-        [Key]
-        public Guid courseId { get; set; }
-        public string courseTitle { get; set; }
-        public ICollection<CourseUrlDto> urls { get; set; }
+        //public Guid Id { get; set; }
+        public string Author { get; set; }
+        public string Name { get; set; }
+        public string Url { get; set; }
 
-    }
-
-    public class CourseUrlDto
-    {
-        [Key]
-        public Guid courseId { get; set; }
-        public string title { get; set; }
-        public string url { get; set; }
     }
 }

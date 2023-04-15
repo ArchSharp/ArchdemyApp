@@ -12,6 +12,8 @@ namespace Application.Services.Interfaces
     {
         Task<SuccessResponse<CreateCourseDto>> CreateCourse(CreateCourseDto model);
         Task<SuccessResponse<GetCourseDto>> GetCourseByCourseId(Guid id);
-        Task<SuccessResponse<ICollection<CategoryCoursesDto>>> GetCoursesByCategoryId(string catId);
+        Task<SuccessResponse<ICollection<CategoryCoursesDto>>> GetCoursesByCategoryId(string CategoryId);
+        Task<SuccessResponse<ICollection<GetCourseDto>>> GetAllCourses();
+        Task<SuccessResponse<UpdateCourseDto>> UpdateCourse(UpdateCourseDto model);
     }
 }

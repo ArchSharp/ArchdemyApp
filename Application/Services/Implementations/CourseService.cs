@@ -22,7 +22,7 @@ namespace Application.Services.Implementations
         public CourseService(IRepository<Course> courseRepository, IMapper mapper) { 
             _courseRepository = courseRepository;
             _mapper = mapper;
-        }
+        }        
 
         public async Task<SuccessResponse<CreateCourseDto>> CreateCourse(CreateCourseDto model)
         {
@@ -39,6 +39,21 @@ namespace Application.Services.Implementations
                 code = 201,
                 Message = ResponseMessages.NewCourseCreated,
                 ExtraInfo = "",
+            };
+        }
+
+        public async Task<SuccessResponse<ICollection<GetCourseDto>>> GetAllCourses()
+        {
+            var allCourse = await _courseRepository.GetAllAsync();
+
+            var courseResponse = _mapper.Map<ICollection<GetCourseDto>>(allCourse);
+
+            return new SuccessResponse<ICollection<GetCourseDto>>
+            {
+                Data = courseResponse,
+                code = 201,
+                Message = ResponseMessages.CourseFetchedSuccesss,
+                ExtraInfo = courseResponse.Count()+" records fetched",
             };
         }
 
@@ -61,9 +76,9 @@ namespace Application.Services.Implementations
             };
         }
 
-        public async Task<SuccessResponse<ICollection<CategoryCoursesDto>>> GetCoursesByCategoryId(string catId)
+        public async Task<SuccessResponse<ICollection<CategoryCoursesDto>>> GetCoursesByCategoryId(string CategoryId)
         {
-            var findCourse = await _courseRepository.FindAsync(x => x.categoryId == catId);
+            var findCourse = await _courseRepository.FindAsync(x => x.CategoryId == CategoryId);
 
             if (findCourse == null)
                 throw new RestException(HttpStatusCode.NotFound, ResponseMessages.CourseNotFound);
@@ -76,6 +91,35 @@ namespace Application.Services.Implementations
                 code = 200,
                 Message = ResponseMessages.CourseFetchedSuccesss,
                 ExtraInfo = courseResponse.Count()+" records",
+            };
+        }
+
+        public async Task<SuccessResponse<UpdateCourseDto>> UpdateCourse(UpdateCourseDto model)
+        {
+            var findCourse = await _courseRepository.FirstOrDefault(x => x.CourseId == model.CourseId);
+
+            if (findCourse == null)
+            {
+                throw new RestException(HttpStatusCode.NotFound, ResponseMessages.CourseNotFound);
+            }
+
+            /*var updatedCourse = _mapper.Map<Course>(model);
+            updatedCourse.CourseId = model.CourseId;
+            */
+            
+            _mapper.Map(model, findCourse);
+            var updatedResponse = _mapper.Map<UpdateCourseDto>(model);
+            //_courseRepository.Update(updatedCourse);
+            await _courseRepository.SaveChangesAsync();
+
+
+            return new SuccessResponse<UpdateCourseDto>
+            {
+                Data = updatedResponse,
+                code = 201,
+                Message = ResponseMessages.CourseUpdated,
+                ExtraInfo = "",
+
             };
         }
     }

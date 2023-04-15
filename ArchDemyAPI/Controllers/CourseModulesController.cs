@@ -12,6 +12,7 @@ namespace API.Controllers
     public class CourseModulesController : Controller
     {
         private readonly ICourseModules _courseModules;
+        
         public CourseModulesController(ICourseModules courseModules)
         {
              _courseModules = courseModules;
@@ -23,11 +24,26 @@ namespace API.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost()]
-        [Route("NewCourse")]
+        [Route("New")]
         [ProducesResponseType(typeof(SuccessResponse<CourseModuleDtos>), 200)]
         public async Task<IActionResult> CreateCourseModule([FromBody] CourseModuleDtos model)
         {
             var response = await _courseModules.CreateCourseModule(model);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Endpoint to add course to module
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut()]
+        [Route("AddTopic")]
+        [ProducesResponseType(typeof(SuccessResponse<CourseModuleDtos>), 200)]
+        public async Task<IActionResult> AddContentToModule([FromBody] CourseModuleDtos model)
+        {
+            var response = await _courseModules.UpdateCourseModule(model);
 
             return Ok(response);
         }

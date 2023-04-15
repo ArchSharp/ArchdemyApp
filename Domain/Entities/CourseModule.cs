@@ -11,36 +11,26 @@ namespace Domain.Entities
     public class CourseModule
     {
         [Key]
-        public Guid courseId { get; set; }
-        public ICollection<EachModule> courseModules { get; set;}
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+        public Guid CourseId { get; set; }
+        public string Name { get; set; }
+        public ICollection<Topic> Topics { get; set; }
+        public Course Course { get; set; }
     }
 
-    public class EachModule
+    public class Topic
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid id { get; set; }
-        public string courseTitle { get; set; }
-        public ICollection<CourseUrl> urls { get; set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Author { get; set; }
+        public string Url { get; set; }
 
         //Navigation property
         public CourseModule CourseModule { get; set; }
-        [ForeignKey("CourseModule")]
-        public Guid courseId { get; set; }
-    }
-
-    public class CourseUrl
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid id { get; set; }
-        public string title { get; set; }
-        public string url { get; set; }
-
-        //Foreign key
-        public EachModule EachModule { get; set; }
-        [ForeignKey("CourseModule")]
-        public Guid courseId { get; set; }
+        public Guid CourseModuleId { get; set; }
     }
 
 }
