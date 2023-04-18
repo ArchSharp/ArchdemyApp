@@ -17,11 +17,14 @@ namespace Application.Services.Implementations
     public class UserService : IUserService
     {
         private readonly IRepository<User> _userRepository;
-        private readonly IMapper _mapper; 
-        public UserService(IRepository<User> userRepository, IMapper mapper)
+        private readonly IMapper _mapper;
+        private readonly IJwtService _jwtService;
+
+        public UserService(IRepository<User> userRepository, IMapper mapper, IJwtService jwtService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _jwtService = jwtService;
         }
 
         public async Task<SuccessResponse<CreateUserDto>> CreateUser(CreateUserDto model)
@@ -69,6 +72,8 @@ namespace Application.Services.Implementations
             if (findUser == null)
                 throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserNotFound);
 
+            string token = _jwtService.GetJwtToken(findUser);            
+
             var userResponse = _mapper.Map<CreateUserDto>(findUser);
 
             return new SuccessResponse<CreateUserDto>
@@ -76,7 +81,7 @@ namespace Application.Services.Implementations
                 Data = userResponse,
                 code = 200,
                 Message = ResponseMessages.LoginSuccessful,
-                ExtraInfo = "",
+                ExtraInfo = token,
             };
         }
     }

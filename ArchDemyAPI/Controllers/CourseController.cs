@@ -1,12 +1,13 @@
 ﻿using Application.DTOs;
 using Application.Helpers;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    //[ApiController]
-    //[ApiVersion("1.0")]
+    [ApiController]
+    [ApiVersion("1.0")]
     [Route("api/Course")]
     public class CourseController : Controller
     {
@@ -70,6 +71,7 @@ namespace API.Controllers
         [HttpGet()]
         [Route("GetAllCourses")]
         [ProducesResponseType(typeof(SuccessResponse<ICollection<GetCourseDto>>), 201)]
+        [Authorize]
         public async Task<IActionResult> GetAllCourses()
         {
             var response = await _courseService.GetAllCourses();

@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    //[ApiController]
-    //[ApiVersion("1.0")]
+    [ApiController]
+    [ApiVersion("1.0")]
     [Route("api/CourseModule")]
     public class CourseModulesController : Controller
     {
