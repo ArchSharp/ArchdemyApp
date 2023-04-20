@@ -11,6 +11,7 @@ namespace Domain.Common
         public const string NewUserCreated = "User created successfully";
         public const string LoginSuccessful = "Login successfully";
         public const string UserNotFound = "User not found";
+        public const string InCorrectPassword = "Wrong password";
         public const string UserAlreadyExist = "User already exist";
         public const string ForgotPasswordLinkSent = "Forgot password link has been sent to your email";
         public const string NewCourseCreated = "Course created successfully";

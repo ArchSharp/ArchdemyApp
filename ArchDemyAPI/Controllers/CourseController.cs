@@ -9,6 +9,7 @@ namespace API.Controllers
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/Course")]
+    [Authorize]
     public class CourseController : Controller
     {
         private readonly ICourseService _courseService;
@@ -71,7 +72,7 @@ namespace API.Controllers
         [HttpGet()]
         [Route("GetAllCourses")]
         [ProducesResponseType(typeof(SuccessResponse<ICollection<GetCourseDto>>), 201)]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetAllCourses()
         {
             var response = await _courseService.GetAllCourses();

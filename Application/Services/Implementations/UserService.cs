@@ -27,12 +27,40 @@ namespace Application.Services.Implementations
             _jwtService = jwtService;
         }
 
+        public async Task<SuccessResponse<ChangePasswordDto>> ChangePassword(ChangePasswordDto model)
+        {
+            var findUser = await _userRepository.FirstOrDefault(x => x.Email == model.Email);
+
+            if (findUser == null)
+                throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserNotFound);
+
+            string hashPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            model.Password = hashPassword;
+
+            var newUser = _mapper.Map<User>(model);
+            _mapper.Map(model, findUser);
+            await _userRepository.SaveChangesAsync();
+
+            var userResponse = _mapper.Map<ChangePasswordDto>(newUser);            
+
+            return new SuccessResponse<ChangePasswordDto>
+            {
+                Data = userResponse,
+                code = 200,
+                Message = ResponseMessages.LoginSuccessful,
+                ExtraInfo = ""
+            };
+        }
+
         public async Task<SuccessResponse<CreateUserDto>> CreateUser(CreateUserDto model)
         {
             var findUser = await _userRepository.FirstOrDefault(x => x.Email == model.Email);
 
             if (findUser != null)
                 throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserAlreadyExist);
+
+            string hashPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            model.Password = hashPassword;
 
             var newUser = _mapper.Map<User>(model);
 
@@ -71,8 +99,9 @@ namespace Application.Services.Implementations
 
             if (findUser == null)
                 throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserNotFound);
-
-            string token = _jwtService.GetJwtToken(findUser);            
+            if (!BCrypt.Net.BCrypt.Verify(model.Password, findUser.Password))
+                throw new RestException(HttpStatusCode.BadRequest, ResponseMessages.InCorrectPassword);
+            string token = _jwtService.CreateJwtToken(findUser);            
 
             var userResponse = _mapper.Map<CreateUserDto>(findUser);
 

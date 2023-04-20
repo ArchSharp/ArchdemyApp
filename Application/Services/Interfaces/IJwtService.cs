@@ -10,6 +10,6 @@ namespace Application.Services.Interfaces
 {
     public interface IJwtService : IAutoDependencyService
     {
-        string GetJwtToken(User user);
+        string CreateJwtToken(User user);
     }
 }

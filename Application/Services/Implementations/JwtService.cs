@@ -22,7 +22,7 @@ namespace Application.Services.Implementations
             _jwtParameters = jwtParameters.Value;
         }
 
-        public string GetJwtToken(User user)
+        public string CreateJwtToken(User user)
         {
             var claims = new Claim[]
             {

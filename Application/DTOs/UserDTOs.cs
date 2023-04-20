@@ -25,6 +25,10 @@ namespace Application.DTOs
         public string Email { get; set;}
         public string Password { get; set;}
     }
+    public class ChangePasswordDto : LoginUserDto
+    {
+
+    }
 
     public class ForgotPasswordDto
     {

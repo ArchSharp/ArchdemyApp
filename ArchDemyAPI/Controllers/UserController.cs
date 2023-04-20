@@ -46,6 +46,20 @@ namespace API.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Endpoint to change password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Route("ChangePassword")]
+        [ProducesResponseType(typeof(SuccessResponse<ChangePasswordDto>), 200)]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        {
+            var response = await _userService.ChangePassword(model);
+            return Ok(response);
+        }
+
         [HttpPost()]
         [Route("ForgotPassword")]
         [ProducesResponseType(typeof(SuccessResponse<ForgotPasswordDto>), 200)]

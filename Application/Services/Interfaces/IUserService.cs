@@ -13,5 +13,6 @@ namespace Application.Services.Interfaces
         Task<SuccessResponse<CreateUserDto>> CreateUser(CreateUserDto model);
         Task<SuccessResponse<CreateUserDto>> LoginUser(LoginUserDto model);
         Task<SuccessResponse<ForgotPasswordDto>> ForgotPassword(ForgotPasswordDto model);
+        Task<SuccessResponse<ChangePasswordDto>> ChangePassword(ChangePasswordDto model);
     }
 }
