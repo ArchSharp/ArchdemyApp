@@ -15,6 +15,7 @@ namespace Application.Mapper
         {
             CreateMap<User, CreateUserDto>().ReverseMap();
             CreateMap<User, ChangePasswordDto>().ReverseMap();
+            CreateMap<User, ResetPasswordDto>().ReverseMap();
         }
     }
 }

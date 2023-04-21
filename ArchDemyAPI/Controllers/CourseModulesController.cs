@@ -8,7 +8,7 @@ namespace API.Controllers
 {
     [ApiController]
     [ApiVersion("1.0")]
-    [Route("api/CourseModule")]
+    [Route("api/v{version:apiVersion}/CourseModule")]
     public class CourseModulesController : Controller
     {
         private readonly ICourseModules _courseModules;

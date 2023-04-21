@@ -8,7 +8,7 @@ namespace API.Controllers
 {
     [ApiController]
     [ApiVersion("1.0")]
-    [Route("api/Course")]
+    [Route("api/v{version:apiVersion}/Course")]
     [Authorize]
     public class CourseController : Controller
     {

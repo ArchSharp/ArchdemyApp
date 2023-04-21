@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,11 @@ namespace Application.Services.Interfaces
 {
     public interface IUserService : IAutoDependencyService
     {
-        Task<SuccessResponse<CreateUserDto>> CreateUser(CreateUserDto model);
-        Task<SuccessResponse<CreateUserDto>> LoginUser(LoginUserDto model);
+        Task<SuccessResponse<CreateUserDto>> Register(CreateUserDto model);
+        Task<SuccessResponse<CreateUserDto>> Login(LoginUserDto model);
         Task<SuccessResponse<ForgotPasswordDto>> ForgotPassword(ForgotPasswordDto model);
-        Task<SuccessResponse<ChangePasswordDto>> ChangePassword(ChangePasswordDto model);
+        Task<SuccessResponse<CreateUserDto>> ResetPassword(ResetPasswordDto model);
+        Task<SuccessResponse<CreateUserDto>> ChangePassword(ChangePasswordDto model);
+        Task<SuccessResponse<CreateUserDto>> VerifyEmail(string email, string token);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace Application.DTOs
         public string UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [Required, EmailAddress]
         public string Email { get; set; }
         public string Street { get; set; }
         public string City { get; set; }
@@ -22,16 +24,36 @@ namespace Application.DTOs
 
     public class LoginUserDto
     {
-        public string Email { get; set;}
+        [Required, EmailAddress]
+        public string Email { get; set; }
+        [Required]
         public string Password { get; set;}
     }
-    public class ChangePasswordDto : LoginUserDto
+    public class ChangePasswordDto
     {
+        [Required, EmailAddress]
+        public string Email { get; set; }
+        [Required]
+        public string CurrentPassword { get; set; }
+        [Required, MinLength(6, ErrorMessage = "Please enter at least 6 characters!")]
+        public string NewPassword { get; set; }
+    }
 
+    public class ResetPasswordDto
+    {
+        [Required, EmailAddress]
+        public string Email { get; set; }
+        [Required, MinLength(6, ErrorMessage = "Please enter at least 6 characters!")]
+        public string Password { get; set; }
+        [Required]
+        public string Token { get; set; }
+        [Required, Compare("Password")]
+        public string ConfirmPassword { get; set; }
     }
 
     public class ForgotPasswordDto
     {
+        [Required]
         public string Email { get; set;}
     }
 }

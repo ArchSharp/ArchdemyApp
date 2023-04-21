@@ -11,11 +11,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using API.Middlewares;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Application.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.Configure<JwtParameters>(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.Configure<EmailSender>(builder.Configuration.GetSection("EmailSettings"));
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacContainerModule()));
@@ -37,7 +39,6 @@ builder.Services.ConfigureApiVersioning(builder.Configuration);
 builder.Services.ConfigureMvc();//register automapper
 
 var app = builder.Build();
-var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -45,6 +46,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();    
     app.UseSwaggerUI(c =>
     {
+        var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
         foreach(var description in provider.ApiVersionDescriptions)
         {
             c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",

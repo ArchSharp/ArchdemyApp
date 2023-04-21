@@ -7,7 +7,7 @@ namespace API.Controllers
 {
     [ApiController]
     [ApiVersion("1.0")]
-    [Route("api/Auth")]
+    [Route("api/v{version:apiVersion}/Auth")]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -24,10 +24,10 @@ namespace API.Controllers
         /// <returns></returns>
         [HttpPost()]
         [Route("Register")]
-        [ProducesResponseType(typeof(SuccessResponse<CreateUserDto>), 200)]
-        public async Task<IActionResult> CreateUser(CreateUserDto model)
+        [ProducesResponseType(typeof(SuccessResponse<CreateUserDto>), 201)]
+        public async Task<IActionResult> Register(CreateUserDto model)
         {
-            var response = await _userService.CreateUser(model);
+            var response = await _userService.Register(model);
 
             return Ok(response);
         }
@@ -40,9 +40,37 @@ namespace API.Controllers
         [HttpPost()]
         [Route("Login")]
         [ProducesResponseType(typeof(SuccessResponse<CreateUserDto>), 200)]
-        public async Task<IActionResult> LoginUser([FromBody]LoginUserDto model)
+        public async Task<IActionResult> Login([FromBody]LoginUserDto model)
         {
-            var response = await _userService.LoginUser(model);
+            var response = await _userService.Login(model);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Forgot password endpoint
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Route("ForgotPassword")]
+        [ProducesResponseType(typeof(SuccessResponse<ForgotPasswordDto>), 204)]
+        public async Task<IActionResult> ForgotPassword([FromBody]ForgotPasswordDto model)
+        {
+            var response = await _userService.ForgotPassword(model);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Endpoint to reset password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Route("ResetPassword")]
+        [ProducesResponseType(typeof(SuccessResponse<CreateUserDto>), 200)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            var response = await _userService.ResetPassword(model);
             return Ok(response);
         }
 
@@ -60,12 +88,17 @@ namespace API.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Endpoint to verify email
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost()]
-        [Route("ForgotPassword")]
-        [ProducesResponseType(typeof(SuccessResponse<ForgotPasswordDto>), 200)]
-        public async Task<IActionResult> ForgotPassword([FromBody]ForgotPasswordDto model)
+        [Route("VerifyEmail")]
+        [ProducesResponseType(typeof(SuccessResponse<CreateUserDto>), 200)]
+        public async Task<IActionResult> VerifyEmail(string email, string token)
         {
-            var response = await _userService.ForgotPassword(model);
+            var response = await _userService.VerifyEmail(email,token);
             return Ok(response);
         }
     }
