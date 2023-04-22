@@ -1,5 +1,7 @@
-﻿using Application.Services.Interfaces;
+﻿using Application.DTOs;
+using Application.Services.Interfaces;
 using Domain.Entities;
+using Infrastructure.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +10,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,10 +19,14 @@ namespace Application.Services.Implementations
     internal sealed class JwtService : IJwtService
     {
         private readonly JwtParameters _jwtParameters;
+        private readonly IRepository<RefreshToken> _refreshTokenRepository;
+        private readonly IRepository<User> _userRepository;
 
-        public JwtService(IOptions<JwtParameters> jwtParameters)
+        public JwtService(IOptions<JwtParameters> jwtParameters, IRepository<RefreshToken> refreshToken, IRepository<User> userRepository)
         {
             _jwtParameters = jwtParameters.Value;
+            _refreshTokenRepository = refreshToken;
+            _userRepository = userRepository;
         }
 
         public string CreateJwtToken(User user)
@@ -45,6 +52,43 @@ namespace Application.Services.Implementations
             string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
 
             return tokenValue;
+        }
+        public async Task<string> CreateRefreshToken()
+        {
+            var tokenBytes = RandomNumberGenerator.GetBytes(64);
+            var refreshtoken = Convert.ToBase64String(tokenBytes);
+
+            var isRefreshTokenInDb = await _refreshTokenRepository.FirstOrDefault(x => x.Token == refreshtoken);
+            if (isRefreshTokenInDb != null)
+            {
+                return await CreateRefreshToken();
+            }
+
+            return refreshtoken;
+        }
+        public async Task<TokenDto> RenewTokens(RefreshTokenDto refreshToken)
+        {
+            var userRefreshToken = await _refreshTokenRepository.FirstOrDefault(x => x.Token == refreshToken.Token &&
+                                                                              x.ExpirationDate >= DateTime.UtcNow);
+            if (userRefreshToken == null)
+            {
+                return null;
+            }
+
+            var findUser = await _userRepository.FirstOrDefault(x => x.Id == userRefreshToken.UserId);
+
+            var newJwtToken = CreateJwtToken(findUser);
+            var newRefreshToken = await CreateRefreshToken();
+
+            userRefreshToken.Token = newRefreshToken;
+            userRefreshToken.ExpirationDate = DateTime.UtcNow.AddDays(7);
+            await _refreshTokenRepository.SaveChangesAsync();
+
+            return new TokenDto
+            {
+                AccessToken = newJwtToken,
+                RefreshToken = newRefreshToken
+            };
         }
     }
 }

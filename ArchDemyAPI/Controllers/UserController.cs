@@ -11,10 +11,12 @@ namespace API.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IJwtService _jwtService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IJwtService jwtService)
         {
             _userService = userService;
+            _jwtService = jwtService;
         }
 
         /// <summary>
@@ -99,6 +101,20 @@ namespace API.Controllers
         public async Task<IActionResult> VerifyEmail(string email, string token)
         {
             var response = await _userService.VerifyEmail(email,token);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Endpoint to verify email
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Route("RenewToken")]
+        [ProducesResponseType(typeof(SuccessResponse<TokenDto>), 200)]
+        public async Task<IActionResult> RenewToken(RefreshTokenDto model)
+        {
+            var response = await _jwtService.RenewTokens(model);
             return Ok(response);
         }
     }

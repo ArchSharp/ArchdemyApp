@@ -56,4 +56,15 @@ namespace Application.DTOs
         [Required]
         public string Email { get; set;}
     }
+
+    public class TokenDto
+    {
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
+    }
+
+    public class RefreshTokenDto
+    {
+        public string Token { get; set; }
+    }
 }

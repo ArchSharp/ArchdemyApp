@@ -4,6 +4,7 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.Common;
 using Domain.Entities;
+using Infrastructure.Data.Migrations;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,16 +22,18 @@ namespace Application.Services.Implementations
     public class UserService : IUserService
     {
         private readonly IRepository<User> _userRepository;
+        private readonly IRepository<RefreshToken> _refreshTokenRepository;
         private readonly IMapper _mapper;
         private readonly IJwtService _jwtService;
         private readonly IEmailService _emailService;
 
-        public UserService(IRepository<User> userRepository, IMapper mapper, IJwtService jwtService,IEmailService emailService)
+        public UserService(IRepository<User> userRepository, IMapper mapper, IJwtService jwtService, IEmailService emailService, IRepository<RefreshToken> refreshTokenRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _jwtService = jwtService;
             _emailService = emailService;
+            _refreshTokenRepository = refreshTokenRepository;
         }
         public async Task<SuccessResponse<CreateUserDto>> Register(CreateUserDto model)
         {
@@ -41,16 +44,17 @@ namespace Application.Services.Implementations
 
             string hashPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
             model.Password = hashPassword;
+
             var emailVerifyToken = CreateRandomToken();
+            var verifyEmailMessage = "Please click the following link " +
+                                                       "to verify your email https://localhost:7219/api/v1/Auth/VerifyEmail?email=" 
+                                                       + model.Email + "&token=" + emailVerifyToken;
+            SendEmailVerificationToken(model.Email, "Email verification", verifyEmailMessage);
 
             var newUser = _mapper.Map<User>(model);
 
             await _userRepository.AddAsync(newUser);
             await _userRepository.SaveChangesAsync();
-            var verifyEmailMessage = "Please click the following link " +
-                                                       "to verify your email https://localhost:7219/api/v1/Auth/VerifyEmail?email=" 
-                                                       + model.Email + "&token=" + emailVerifyToken;
-            SendEmailVerificationToken(model.Email, "Email verification", verifyEmailMessage);
 
             var newUserResponse = _mapper.Map<CreateUserDto>(newUser);
 
@@ -73,34 +77,45 @@ namespace Application.Services.Implementations
                 throw new RestException(HttpStatusCode.BadRequest, ResponseMessages.InCorrectPassword);
 
             var responseMessage = ResponseMessages.LoginSuccessful;
-            string token = _jwtService.CreateJwtToken(findUser);
+            
+            // Create user Token
+            string accessToken = _jwtService.CreateJwtToken(findUser);
+            var isUserRefreshTokenInDb = await _refreshTokenRepository.FirstOrDefault(x => x.UserId == findUser.Id && x.ExpirationDate >= DateTime.UtcNow);
+            var refreshToken = isUserRefreshTokenInDb == null ? await _jwtService.CreateRefreshToken() : isUserRefreshTokenInDb.Token;
+            if(isUserRefreshTokenInDb == null) 
+                await InsertRefreshToken(findUser.Id, refreshToken);
+            
+            var extraIfo = new TokenDto
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            };
+            //----------------------
 
             if (!findUser.EmailConfirmed)
             {
-                TimeSpan timeSinceStartDate = DateTime.Now - findUser.CreatedAt;
+                TimeSpan timeSinceStartDate = DateTime.UtcNow - findUser.CreatedAt;
                 int daysSinceStartDate = timeSinceStartDate.Days;
                 if (daysSinceStartDate >= 3)
                 {
                     var newVerifyToken = CreateRandomToken();
                     findUser.VerificationToken = newVerifyToken;
-                    findUser.VerifiedAt = DateTime.Now.ToUniversalTime();
+                    findUser.VerifiedAt = DateTime.UtcNow;
                     await _userRepository.SaveChangesAsync();
 
                     var verifyEmailMessage = "Please click the following link " +
                                                        "to verify your email https://localhost:7219/api/v1/Auth/VerifyEmail?email="
                                                        + model.Email + "&token=" + newVerifyToken;
                     SendEmailVerificationToken(model.Email, "Email verification", verifyEmailMessage);
-                    responseMessage = "Please check your mail for email verification link";
-                    token = "";
+
+                    throw new RestException(HttpStatusCode.Forbidden, ResponseMessages.UserEmailNotVerified);
                 }
                 else
                 {
-                    responseMessage = "Please click on the email verification link in your mail";
-                    token = "";
-                }
-                //throw new RestException(HttpStatusCode.BadRequest, ResponseMessages.VerifyEmail);
+                    throw new RestException(HttpStatusCode.Forbidden, ResponseMessages.UserEmailNotVerified);
+                }                
             }
-                        
+
             var userResponse = _mapper.Map<CreateUserDto>(findUser);
 
             return new SuccessResponse<CreateUserDto>
@@ -108,7 +123,7 @@ namespace Application.Services.Implementations
                 Data = userResponse,
                 code = 200,
                 Message = responseMessage,
-                ExtraInfo = token,
+                ExtraInfo = extraIfo,
             };
         }
         public async Task<SuccessResponse<ForgotPasswordDto>> ForgotPassword(ForgotPasswordDto model)
@@ -209,6 +224,22 @@ namespace Application.Services.Implementations
                 ExtraInfo = "",
             };
         }
+        public async Task<SuccessResponse<TokenDto>> RenewTokens(RefreshTokenDto model)
+        {
+            var tokens = await _jwtService.RenewTokens(model);
+            if (tokens == null)
+            {
+                throw new RestException(HttpStatusCode.BadRequest, ResponseMessages.InvalidRefreshToken);
+            }
+
+            return new SuccessResponse<TokenDto>
+            {
+                Data = tokens,
+                code = 200,
+                Message = ResponseMessages.RenewedToken,
+                ExtraInfo = "",
+            };
+        }
         private string CreateRandomToken ()
         {
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
@@ -224,6 +255,16 @@ namespace Application.Services.Implementations
                 throw new RestException(HttpStatusCode.NotFound, ex.ToString());
             }
         }
-
+        private async Task InsertRefreshToken(Guid userId, string refreshtoken)
+        {
+            var newRefreshToken = new RefreshToken
+            {
+                UserId = userId,
+                Token = refreshtoken,
+                ExpirationDate = DateTime.UtcNow.AddDays(7)
+            };
+            await _refreshTokenRepository.AddAsync(newRefreshToken);
+            await _refreshTokenRepository.SaveChangesAsync();
+        }
     }
 }

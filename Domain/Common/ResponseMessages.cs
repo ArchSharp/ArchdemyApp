@@ -12,8 +12,11 @@ namespace Domain.Common
         public const string LoginSuccessful = "Login successfully";
         public const string ResetSuccessful = "Password has been reset successfully";
         public const string VerifyEmail = "Please verify your email";
+        public const string UserEmailNotVerified = "Please click on the email verification link in your mail";
         public const string VerifiedEmail = "Your email is now verified";
+        public const string InvalidRefreshToken = "Invalid Refresh Token";
         public const string InvalidToken = "Invalid token";
+        public const string RenewedToken = "Token is now renewed";
         public const string PasswordChangedSuccessful = "Password has been changed successfully";
         public const string UserNotFound = "User not found";
         public const string InCorrectPassword = "Wrong password";

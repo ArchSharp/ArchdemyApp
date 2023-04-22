@@ -25,11 +25,11 @@ namespace Domain.Entities
         public string Password { get; set; }
         public bool EmailConfirmed { get; set; }
         public string? VerificationToken { get; set; }
-        public DateTime VerifiedAt { get; set; }
+        public DateTime? VerifiedAt { get; set; }
         public string? PasswordResetToken { get; set; }
         public DateTime? ResetTokenExpires { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow.ToUniversalTime();
-        public DateTime? UpdatedAt { get; set; } = DateTime.Now.ToUniversalTime();
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
 
     }
 }
