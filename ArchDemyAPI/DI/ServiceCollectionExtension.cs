@@ -15,7 +15,9 @@ using ShareLoanApp.Application.Services.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
-using Domain.Entities;
+using Domain.Entities.Token;
+using Application.Services.Interfaces;
+using Stripe;
 
 namespace API.DI
 {
@@ -23,6 +25,16 @@ namespace API.DI
     {
         private static readonly ILoggerFactory ContextLoggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
 
+        public static IServiceCollection AddStripeInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        {
+            StripeConfiguration.ApiKey = configuration.GetValue<string>("StripeSettings:SecretKey");
+
+            return services
+                .AddScoped<CustomerService>()
+                .AddScoped<ChargeService>()
+                .AddScoped<TokenService>()
+                .AddScoped<IStripeService, StripeService>();
+        }
         public static void ConfigureCors(this IServiceCollection services)
         {
             services.AddCors(opts =>
@@ -140,9 +152,9 @@ namespace API.DI
                 });
 
                 // TODO: Fix the Docker error on this
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                //c.IncludeXmlComments(xmlPath);
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
     }

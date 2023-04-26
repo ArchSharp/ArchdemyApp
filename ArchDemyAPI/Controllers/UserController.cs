@@ -93,12 +93,13 @@ namespace API.Controllers
         /// <summary>
         /// Endpoint to verify email
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="email"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
         [HttpPost()]
         [Route("VerifyEmail")]
         [ProducesResponseType(typeof(SuccessResponse<CreateUserDto>), 200)]
-        public async Task<IActionResult> VerifyEmail(string email, string token)
+        public async Task<IActionResult> VerifyEmail([FromQuery]string email,[FromQuery] string token)
         {
             var response = await _userService.VerifyEmail(email,token);
             return Ok(response);

@@ -34,4 +34,11 @@ namespace Application.DTOs
     {
         public Guid CourseId { get; set; }
     }
+
+    public class CoursePaymentPayloadDto
+    {
+        public string Name { get; set; }
+        public string CourseId { get; set; }
+        public long Price { get; set; }
+    }
 }

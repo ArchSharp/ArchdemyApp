@@ -4,10 +4,12 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.Common;
 using Domain.Entities;
+using Domain.Entities.Token;
 using Infrastructure.Data.Migrations;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,14 +28,21 @@ namespace Application.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IJwtService _jwtService;
         private readonly IEmailService _emailService;
+        private readonly EmailVerificationUrls _emailVerificationUrls;
 
-        public UserService(IRepository<User> userRepository, IMapper mapper, IJwtService jwtService, IEmailService emailService, IRepository<RefreshToken> refreshTokenRepository)
+        public UserService(
+            IRepository<User> userRepository,
+            IMapper mapper, IJwtService jwtService,
+            IEmailService emailService,
+            IRepository<RefreshToken> refreshTokenRepository,
+            IOptions<EmailVerificationUrls> emailVerificationUrls)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _jwtService = jwtService;
             _emailService = emailService;
             _refreshTokenRepository = refreshTokenRepository;
+            _emailVerificationUrls = emailVerificationUrls.Value;
         }
         public async Task<SuccessResponse<CreateUserDto>> Register(CreateUserDto model)
         {
@@ -46,12 +55,25 @@ namespace Application.Services.Implementations
             model.Password = hashPassword;
 
             var emailVerifyToken = CreateRandomToken();
-            var verifyEmailMessage = "Please click the following link " +
-                                                       "to verify your email https://localhost:7219/api/v1/Auth/VerifyEmail?email=" 
-                                                       + model.Email + "&token=" + emailVerifyToken;
-            SendEmailVerificationToken(model.Email, "Email verification", verifyEmailMessage);
+
+            var emailTemplate = _emailService.LoadTemplate("verifyEmail");
+            var subject = "Email verification";
+
+            //{0} : Subject  
+            //{1} : DateTime  
+            //{2} : Email  
+            //{3} : Username  
+            //{4} : Password  
+            //{5} : Message  
+            //{6} : callbackURL
+
+            var verifyLink = _emailVerificationUrls.Verify.Replace("[Email]", model.Email).Replace("[Token]",emailVerifyToken);
+            var verifyEmailMessage = $"Please click the following link to verify your email {verifyLink}";
+            string messageBody = string.Format(emailTemplate,subject,String.Format("{0:dddd, MMMM d, yyyy} ", DateTime.UtcNow),model.LastName,model.Email,verifyLink);
+            SendEmailVerificationToken(model.Email, "Email verification", messageBody);
 
             var newUser = _mapper.Map<User>(model);
+            newUser.VerificationToken= emailVerifyToken;
 
             await _userRepository.AddAsync(newUser);
             await _userRepository.SaveChangesAsync();
@@ -98,15 +120,17 @@ namespace Application.Services.Implementations
                 int daysSinceStartDate = timeSinceStartDate.Days;
                 if (daysSinceStartDate >= 3)
                 {
-                    var newVerifyToken = CreateRandomToken();
-                    findUser.VerificationToken = newVerifyToken;
+                    var emailVerifyToken = CreateRandomToken();
+                    findUser.VerificationToken = emailVerifyToken;
                     findUser.VerifiedAt = DateTime.UtcNow;
                     await _userRepository.SaveChangesAsync();
 
-                    var verifyEmailMessage = "Please click the following link " +
-                                                       "to verify your email https://localhost:7219/api/v1/Auth/VerifyEmail?email="
-                                                       + model.Email + "&token=" + newVerifyToken;
-                    SendEmailVerificationToken(model.Email, "Email verification", verifyEmailMessage);
+                    var emailTemplate = _emailService.LoadTemplate("verifyEmail");
+                    var subject = "Email verification";
+                    var verifyLink = _emailVerificationUrls.Verify.Replace("[Email]", model.Email).Replace("[Token]", emailVerifyToken);
+                    var verifyEmailMessage = $"Please click the following link to verify your email {verifyLink}";
+                    string messageBody = string.Format(emailTemplate, subject, String.Format("{0:dddd, MMMM d, yyyy} ", DateTime.UtcNow), findUser.LastName, model.Email, verifyLink);
+                    SendEmailVerificationToken(model.Email, "Email verification", messageBody);
 
                     throw new RestException(HttpStatusCode.Forbidden, ResponseMessages.UserEmailNotVerified);
                 }
@@ -212,7 +236,7 @@ namespace Application.Services.Implementations
                 throw new RestException(HttpStatusCode.NotFound, ResponseMessages.InvalidToken);
 
             var userResponse = _mapper.Map<CreateUserDto>(findUser);
-            findUser.UpdatedAt = DateTime.Now.ToUniversalTime();
+            findUser.VerifiedAt = DateTime.UtcNow;
             findUser.EmailConfirmed = true;
             await _userRepository.SaveChangesAsync();
 

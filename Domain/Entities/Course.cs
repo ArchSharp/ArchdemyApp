@@ -17,7 +17,7 @@ namespace Domain.Entities
         public string CategoryId { get; set; }
         public string Author { get; set; }
         public bool IsPremium { get; set; }
-        public double Cost { get; set; }
+        public long Cost { get; set; }
         public string Title { get; set; }
         public string Image {get; set; }
         public int PurchaseNumber { get; set; }

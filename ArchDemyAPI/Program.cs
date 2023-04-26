@@ -12,12 +12,20 @@ using Microsoft.Extensions.Configuration;
 using API.Middlewares;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Application.DTOs;
+using Stripe;
+using Domain.Entities.Token;
+using Domain.Entities.Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.Configure<JwtParameters>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.Configure<EmailSender>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<EmailVerificationUrls>(builder.Configuration.GetSection("EmailVerificationUrls"));
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
+
+
+//StripeConfiguration.ApiKey = builder.Configuration[key: "StripeSettings:SecretKey"];
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacContainerModule()));
@@ -36,6 +44,7 @@ builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.ConfigureApiVersioning(builder.Configuration);
+builder.Services.AddStripeInfrastructure(builder.Configuration);
 builder.Services.ConfigureMvc();//register automapper
 
 var app = builder.Build();

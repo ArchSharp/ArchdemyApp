@@ -12,6 +12,8 @@ namespace Domain.Common
         public const string LoginSuccessful = "Login successfully";
         public const string ResetSuccessful = "Password has been reset successfully";
         public const string VerifyEmail = "Please verify your email";
+        public const string StripeCustomerCreated = "Stripe customer has been created";
+        public const string StripePaymentSuccess = "Stripe payment successful";
         public const string UserEmailNotVerified = "Please click on the email verification link in your mail";
         public const string VerifiedEmail = "Your email is now verified";
         public const string InvalidRefreshToken = "Invalid Refresh Token";

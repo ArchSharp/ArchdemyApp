@@ -11,5 +11,8 @@ namespace Application.Services.Interfaces
     public interface IEmailService : IAutoDependencyService
     {
         void SendEmail(string to, string subject,string body);
+        string GetEmailTemplate<T>(string emailTemplate, T emailTemplateModel);
+        string LoadTemplate(string emailTemplate);
+
     }
 }

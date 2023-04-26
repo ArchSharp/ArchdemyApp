@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Services.Interfaces;
 using Domain.Entities;
+using Domain.Entities.Token;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
