@@ -15,6 +15,7 @@ using Application.DTOs;
 using Stripe;
 using Domain.Entities.Token;
 using Domain.Entities.Stripe;
+using Domain.Entities.PayStack;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,7 @@ builder.Services.Configure<JwtParameters>(builder.Configuration.GetSection("JwtS
 builder.Services.Configure<EmailSender>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.Configure<EmailVerificationUrls>(builder.Configuration.GetSection("EmailVerificationUrls"));
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
+builder.Services.Configure<PayStackSettings>(builder.Configuration.GetSection("PayStackSettings"));
 
 
 //StripeConfiguration.ApiKey = builder.Configuration[key: "StripeSettings:SecretKey"];
