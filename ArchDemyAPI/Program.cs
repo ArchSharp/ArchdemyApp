@@ -16,6 +16,7 @@ using Stripe;
 using Domain.Entities.Token;
 using Domain.Entities.Stripe;
 using Domain.Entities.PayStack;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,7 @@ builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.ConfigureApiVersioning(builder.Configuration);
 builder.Services.AddStripeInfrastructure(builder.Configuration);
 builder.Services.ConfigureMvc();//register automapper
+builder.Services.ConfigureRateLimiting();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -77,5 +79,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseRateLimiter();
 
 app.Run();

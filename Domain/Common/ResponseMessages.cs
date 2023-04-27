@@ -18,6 +18,7 @@ namespace Domain.Common
         public const string VerifiedEmail = "Your email is now verified";
         public const string InvalidRefreshToken = "Invalid Refresh Token";
         public const string InvalidToken = "Invalid token";
+        public const string TooManyRequest = "Too many request, please try again in next three minutes";
         public const string RenewedToken = "Token is now renewed";
         public const string PasswordChangedSuccessful = "Password has been changed successfully";
         public const string UserNotFound = "User not found";

@@ -3,6 +3,7 @@ using Application.Helpers;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers
 {
@@ -71,6 +72,7 @@ namespace API.Controllers
         /// <returns></returns>
         [HttpGet()]
         [Route("GetAllCourses")]
+        //[EnableRateLimiting("getAllCoursePolicy")]
         [ProducesResponseType(typeof(SuccessResponse<ICollection<GetCourseDto>>), 201)]
         //[Authorize]
         public async Task<IActionResult> GetAllCourses()

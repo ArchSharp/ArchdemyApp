@@ -6,6 +6,7 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,11 @@ using System.Text;
 using Domain.Entities.Token;
 using Application.Services.Interfaces;
 using Stripe;
+using Autofac.Core;
+using System.Threading.RateLimiting;
+using Application.Helpers;
+using Domain.Common;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.DI
 {
@@ -43,6 +49,79 @@ namespace API.DI
                 {
                     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                 });
+            });
+        }
+
+        public static void ConfigureRateLimiting(this IServiceCollection services)
+        {
+            services.AddRateLimiter(options =>
+            {/*
+                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                    RateLimitPartition.GetConcurrencyLimiter(
+                        partitionKey: context.Request.Headers.Host.ToString(),
+                        factory: partition => new ConcurrencyLimiterOptions
+                        {
+                            PermitLimit = 1,
+                        })                        
+                    );*/
+                /*options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: context.Request.Headers.Host.ToString(),
+                        factory: partition => new FixedWindowRateLimiterOptions
+                        {
+                            AutoReplenishment = true,
+                            PermitLimit = 5,
+                            QueueLimit = 10,
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            Window = TimeSpan.FromSeconds(10)
+                        })
+                );*/
+                /*options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                    RateLimitPartition.GetSlidingWindowLimiter(
+                        partitionKey: context.Request.Headers.Host.ToString(),
+                        factory: partition => new SlidingWindowRateLimiterOptions
+                        {
+                            PermitLimit = 2,
+                            SegmentsPerWindow = 2,
+                            Window = TimeSpan.FromSeconds(1),
+                        })
+                );*/
+
+                /*options.AddFixedWindowLimiter("getAllCoursePolicy", opt =>
+                {
+                    opt.Window = TimeSpan.FromSeconds(10);
+                    opt.PermitLimit = 1;
+                    opt.QueueLimit = 0;
+                    opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                });*/
+
+                //sliding window
+                /*options.AddSlidingWindowLimiter("getAllCoursePolicy", opt =>
+                {
+                    opt.Window = TimeSpan.FromSeconds(1);
+                    opt.SegmentsPerWindow = 2;
+                    opt.PermitLimit = 2;
+                    opt.QueueLimit = 3;
+                    opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                });*/
+                options.AddTokenBucketLimiter("getAllCoursePolicy", opt =>
+                {
+                    opt.TokenLimit = 4;
+                    opt.QueueLimit = 2;
+                    opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                    opt.ReplenishmentPeriod = TimeSpan.FromSeconds(10);
+                    opt.TokensPerPeriod = 1;
+                    opt.AutoReplenishment = true;
+                });//.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+                options.OnRejected = (c, t) =>
+                {
+                    Console.WriteLine(c.HttpContext.Request.Path);
+                    var exception = new RestException(HttpStatusCode.TooManyRequests, ResponseMessages.TooManyRequest);
+                    return ValueTask.FromException(exception);
+                    //return ValueTask.CompletedTask;
+                };
             });
         }
 
