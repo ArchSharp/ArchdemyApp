@@ -17,6 +17,7 @@ using Domain.Entities.Token;
 using Domain.Entities.Stripe;
 using Domain.Entities.PayStack;
 using System.Threading.RateLimiting;
+using Identity.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,8 @@ builder.Services.Configure<EmailSender>(builder.Configuration.GetSection("EmailS
 builder.Services.Configure<EmailVerificationUrls>(builder.Configuration.GetSection("EmailVerificationUrls"));
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
 builder.Services.Configure<PayStackSettings>(builder.Configuration.GetSection("PayStackSettings"));
+builder.Services.Configure<GoogleTwoFactorAuthSettings>(builder.Configuration.GetSection("GoogleTwoFactorAuthSettings"));
+builder.Services.Configure<TwilioFnParameters>(builder.Configuration.GetSection("TwilioFnParameters"));
 
 
 //StripeConfiguration.ApiKey = builder.Configuration[key: "StripeSettings:SecretKey"];
@@ -38,7 +41,10 @@ builder.Services.ConfigureCors();
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureSqlContext(builder.Configuration);//add database
 builder.Services.ConfigureSwagger();
+//builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>().SingleInstance();
 
+
+//builder.Services.AddScoped<HttpContextAccessor>().AddScoped<ITwoFactorAuthService, TwoFactorAuthService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

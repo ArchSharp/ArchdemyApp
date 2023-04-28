@@ -28,6 +28,7 @@ namespace Application.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IJwtService _jwtService;
         private readonly IEmailService _emailService;
+        private readonly ITwoFactorAuthService _twoFactorAuthService;
         private readonly EmailVerificationUrls _emailVerificationUrls;
 
         public UserService(
@@ -35,7 +36,8 @@ namespace Application.Services.Implementations
             IMapper mapper, IJwtService jwtService,
             IEmailService emailService,
             IRepository<RefreshToken> refreshTokenRepository,
-            IOptions<EmailVerificationUrls> emailVerificationUrls)
+            IOptions<EmailVerificationUrls> emailVerificationUrls,
+            ITwoFactorAuthService twoFactorAuthService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -43,6 +45,7 @@ namespace Application.Services.Implementations
             _emailService = emailService;
             _refreshTokenRepository = refreshTokenRepository;
             _emailVerificationUrls = emailVerificationUrls.Value;
+            _twoFactorAuthService = twoFactorAuthService;
         }
         public async Task<SuccessResponse<CreateUserDto>> Register(CreateUserDto model)
         {
@@ -67,10 +70,7 @@ namespace Application.Services.Implementations
             //{5} : Message  
             //{6} : callbackURL
 
-            var verifyLink = _emailVerificationUrls.Verify.Replace("[Email]", model.Email).Replace("[Token]",emailVerifyToken);
-            var verifyEmailMessage = $"Please click the following link to verify your email {verifyLink}";
-            string messageBody = string.Format(emailTemplate,subject,String.Format("{0:dddd, MMMM d, yyyy} ", DateTime.UtcNow),model.LastName,model.Email,verifyLink);
-            SendEmailVerificationToken(model.Email, "Email verification", messageBody);
+            SendMailToUser(findUser, emailVerifyToken);
 
             var newUser = _mapper.Map<User>(model);
             newUser.VerificationToken= emailVerifyToken;
@@ -99,7 +99,7 @@ namespace Application.Services.Implementations
                 throw new RestException(HttpStatusCode.BadRequest, ResponseMessages.InCorrectPassword);
 
             var responseMessage = ResponseMessages.LoginSuccessful;
-            
+                        
             // Create user Token
             string accessToken = _jwtService.CreateJwtToken(findUser);
             var isUserRefreshTokenInDb = await _refreshTokenRepository.FirstOrDefault(x => x.UserId == findUser.Id && x.ExpirationDate >= DateTime.UtcNow);
@@ -124,13 +124,7 @@ namespace Application.Services.Implementations
                     findUser.VerificationToken = emailVerifyToken;
                     findUser.VerifiedAt = DateTime.UtcNow;
                     await _userRepository.SaveChangesAsync();
-
-                    var emailTemplate = _emailService.LoadTemplate("verifyEmail");
-                    var subject = "Email verification";
-                    var verifyLink = _emailVerificationUrls.Verify.Replace("[Email]", model.Email).Replace("[Token]", emailVerifyToken);
-                    var verifyEmailMessage = $"Please click the following link to verify your email {verifyLink}";
-                    string messageBody = string.Format(emailTemplate, subject, String.Format("{0:dddd, MMMM d, yyyy} ", DateTime.UtcNow), findUser.LastName, model.Email, verifyLink);
-                    SendEmailVerificationToken(model.Email, "Email verification", messageBody);
+                    SendMailToUser(findUser, emailVerifyToken);
 
                     throw new RestException(HttpStatusCode.Forbidden, ResponseMessages.UserEmailNotVerified);
                 }
@@ -148,7 +142,7 @@ namespace Application.Services.Implementations
                 code = 200,
                 Message = responseMessage,
                 ExtraInfo = extraIfo,
-            };
+            };            
         }
         public async Task<SuccessResponse<ForgotPasswordDto>> ForgotPassword(ForgotPasswordDto model)
         {
@@ -289,6 +283,15 @@ namespace Application.Services.Implementations
             };
             await _refreshTokenRepository.AddAsync(newRefreshToken);
             await _refreshTokenRepository.SaveChangesAsync();
+        }
+        private void SendMailToUser(User findUser, string emailVerifyToken)
+        {
+            var emailTemplate = _emailService.LoadTemplate("verifyEmail");
+            var subject = "Email verification";
+            var verifyLink = _emailVerificationUrls.Verify.Replace("[Email]", findUser.Email).Replace("[Token]", emailVerifyToken);
+            var verifyEmailMessage = $"Please click the following link to verify your email {verifyLink}";
+            string messageBody = string.Format(emailTemplate, subject, String.Format("{0:dddd, MMMM d, yyyy} ", DateTime.UtcNow), findUser.LastName, findUser.Email, verifyLink);
+            SendEmailVerificationToken(findUser.Email, "Email verification", messageBody);
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Application.DTOs;
 using Application.Helpers;
 using Application.Services.Interfaces;
+using Identity.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace API.Controllers
 {
@@ -12,11 +14,20 @@ namespace API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IJwtService _jwtService;
+        private readonly ITwoFactorAuthService _twoFactorAuthService;
+        private readonly ITwilioService _twilioService;
 
-        public UserController(IUserService userService, IJwtService jwtService)
+        public UserController(
+            IUserService userService,
+            IJwtService jwtService,
+            ITwoFactorAuthService twoFactorAuthService,
+            ITwilioService twilioService
+        )
         {
             _userService = userService;
             _jwtService = jwtService;
+            _twoFactorAuthService = twoFactorAuthService;
+            _twilioService = twilioService;
         }
 
         /// <summary>
@@ -106,7 +117,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Endpoint to verify email
+        /// Endpoint to renew token
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -116,6 +127,50 @@ namespace API.Controllers
         public async Task<IActionResult> RenewToken(RefreshTokenDto model)
         {
             var response = await _jwtService.RenewTokens(model);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Endpoint to Google two factor authentication
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Route("Google2FA")]
+        [ProducesResponseType(typeof(SuccessResponse<GoogleTwoFactorAuthResponse>), 200)]
+        public async Task<IActionResult> GoogleTwoFactorAuth([FromQuery] string email)
+        {
+            var response = await _twoFactorAuthService.GenerateNewSecretKey(email);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Endpoint to verify  Google2FA pin
+        /// </summary>
+        /// <param name="email"></param>
+        /// /// <param name="twoFACode"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Route("VerifyGoogle2FA")]
+        [ProducesResponseType(typeof(SuccessResponse<string>), 200)]
+        public async Task<IActionResult> VerifyGoogleTwoFactorAuth([FromQuery] string email, [FromQuery] string twoFACode)
+        {
+            var response = await _twoFactorAuthService.ValidateTwoFactorPin(email, twoFACode);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Endpoint to send OTP using Twilio
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Route("TwilioSendOTP")]
+        public async Task<IActionResult> TwilioSendMessageAync([FromBody] TwilioRequestDto model)
+        {
+
+            var response = await _twilioService.TwilioSendAsync(model.Message, model.To);
+
             return Ok(response);
         }
     }

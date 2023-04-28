@@ -30,5 +30,6 @@ namespace Domain.Common
         public const string CourseUpdated = "Course updated successfully";
         public const string CourseFetchedSuccesss = "Course fetched successfully";
         public const string CourseModuleNotFound = "Course module not found";
+        public const string TwilioSMSFailed = "Failed to send OTP!";
     }
 }

@@ -24,6 +24,8 @@ namespace Domain.Entities
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
         public bool EmailConfirmed { get; set; }
+        public bool IsTwoFactorEnabled { get; set; }
+        public string TwoFactorSecretKey { get; set; }
         public string? VerificationToken { get; set; }
         public DateTime? VerifiedAt { get; set; }
         public string? PasswordResetToken { get; set; }
