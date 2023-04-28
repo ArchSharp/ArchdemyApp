@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Application.Helpers;
 
-namespace Identity.Interfaces
+namespace Application.Services.Interfaces
 {
-    public interface ITwilioService
+    public interface ITwilioService : IAutoDependencyService
     {
         Task<SuccessResponse<MessageResource>> TwilioSendAsync(string message, string to);
     }
