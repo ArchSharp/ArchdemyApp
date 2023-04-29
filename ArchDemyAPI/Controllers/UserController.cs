@@ -1,6 +1,9 @@
 ﻿using Application.DTOs;
 using Application.Helpers;
+using Application.Services.Implementations;
 using Application.Services.Interfaces;
+using Domain.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -169,6 +172,22 @@ namespace API.Controllers
         {
 
             var response = await _twilioService.TwilioSendAsync(model.Message, model.To);
+
+            return Ok(response);
+        }
+
+        ///<summary>
+        /// Endpoint to update user
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [HttpPut()]
+        [Route("UpdateUser")]
+        [ProducesResponseType(typeof(SuccessResponse<UpdateUserDto>), 200)]
+        public async Task<IActionResult> UpdateCourse(string email, [FromBody] UpdateUserDto model)
+        {
+            var response = await _userService.UpdateUser(email, model);
 
             return Ok(response);
         }

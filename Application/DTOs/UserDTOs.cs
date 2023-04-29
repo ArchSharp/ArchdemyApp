@@ -22,6 +22,22 @@ namespace Application.DTOs
         public string Password { get; set; }
     }
 
+    public class UpdateUserDto
+    {
+        public string? UserId { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? Street { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? Country { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Password { get; set; }
+        public List<string>? CartCourses { get; set; }
+        public List<string>? PurchasedCourses { get; set; }
+    }
+
     public class LoginUserDto
     {
         [Required, EmailAddress]

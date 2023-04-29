@@ -1,5 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Helpers;
+using Domain.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,5 +19,6 @@ namespace Application.Services.Interfaces
         Task<SuccessResponse<CreateUserDto>> ResetPassword(ResetPasswordDto model);
         Task<SuccessResponse<CreateUserDto>> ChangePassword(ChangePasswordDto model);
         Task<SuccessResponse<CreateUserDto>> VerifyEmail(string email, string token);
+        Task<SuccessResponse<UpdateUserDto>> UpdateUser(string email, UpdateUserDto model);
     }
 }
