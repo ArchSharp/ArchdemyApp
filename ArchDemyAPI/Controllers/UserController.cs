@@ -12,6 +12,7 @@ namespace API.Controllers
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/Auth")]
+       
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -19,6 +20,9 @@ namespace API.Controllers
         private readonly ITwoFactorAuthService _twoFactorAuthService;
         private readonly ITwilioService _twilioService;
 
+        /// <summary>
+        /// This class represents a controller for user-related actions.
+        /// </summary>
         public UserController(
             IUserService userService,
             IJwtService jwtService,

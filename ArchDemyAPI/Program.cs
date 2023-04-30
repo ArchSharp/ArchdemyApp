@@ -30,12 +30,8 @@ builder.Services.Configure<PayStackSettings>(builder.Configuration.GetSection("P
 builder.Services.Configure<GoogleTwoFactorAuthSettings>(builder.Configuration.GetSection("GoogleTwoFactorAuthSettings"));
 builder.Services.Configure<TwilioFnParameters>(builder.Configuration.GetSection("TwilioFnParameters"));
 
-
-//StripeConfiguration.ApiKey = builder.Configuration[key: "StripeSettings:SecretKey"];
-
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacContainerModule()));
-
 
 builder.Services.ConfigureCors();
 builder.Services.ConfigureLoggerService();

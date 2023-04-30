@@ -16,6 +16,7 @@ namespace Server.Controllers;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/Payment")]
+
 public class PaymentController : Controller
 {
     private readonly IStripeService _stripeService;
@@ -34,6 +35,7 @@ public class PaymentController : Controller
     /// Endpoint to add customer to stripe
     /// </summary>
     /// <param name="customer"></param>
+    /// <param name="ct"></param>
     /// <returns></returns>
     [HttpPost()]
     [Route("AddCustomerToStripe")]
@@ -49,6 +51,7 @@ public class PaymentController : Controller
     /// Endpoint to make stripe payment
     /// </summary>
     /// <param name="payment"></param>
+    /// <param name="ct"></param>
     /// <returns></returns>
     [HttpPost()]
     [Route("PayStripe")]

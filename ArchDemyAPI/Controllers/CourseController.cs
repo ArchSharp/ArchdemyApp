@@ -11,6 +11,7 @@ namespace API.Controllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/Course")]
     [Authorize]
+
     public class CourseController : Controller
     {
         private readonly ICourseService _courseService;
@@ -38,7 +39,7 @@ namespace API.Controllers
         /// <summary>
         /// Endpoint to get course by course id
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet()]
         [Route("GetCourseById")]
@@ -53,7 +54,7 @@ namespace API.Controllers
         /// <summary>
         /// Endpoint to get course by course categoryId
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="CategoryId"></param>
         /// <returns></returns>
         [HttpGet()]
         [Route("GetCourseByCategoryId")]
@@ -68,7 +69,6 @@ namespace API.Controllers
         /// <summary>
         /// Endpoint to get all course
         /// </summary>
-        /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet()]
         [Route("GetAllCourses")]

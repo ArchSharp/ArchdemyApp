@@ -42,7 +42,8 @@ namespace Application.Services.Implementations
             IEmailService emailService,
             IRepository<RefreshToken> refreshTokenRepository,
             IOptions<EmailVerificationUrls> emailVerificationUrls,
-            ITwoFactorAuthService twoFactorAuthService)
+            ITwoFactorAuthService twoFactorAuthService
+        )
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -148,6 +149,70 @@ namespace Application.Services.Implementations
                 Message = responseMessage,
                 ExtraInfo = extraIfo,
             };            
+        }
+        public async Task<SuccessResponse<UpdateUserDto>> UpdateUser(string email, UpdateUserDto model)
+        {
+            var findUser = await _userRepository.FirstOrDefault(x => x.Email == email);
+
+            if (findUser == null)
+                throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserNotFound);
+
+            Type type = model.GetType();
+            PropertyInfo[] properties = type.GetProperties();
+
+            Type typeDB = findUser.GetType();
+            PropertyInfo[] propertiesDB = typeDB.GetProperties();
+
+            foreach (PropertyInfo property in properties)
+            {
+                string modelName = property.Name;
+                object? value = property.GetValue(model);
+                foreach (PropertyInfo propertyDB in propertiesDB)
+                {
+                    string dbPropName = propertyDB.Name;
+                    if (dbPropName == "Id") continue;
+                    object value2 = propertyDB.GetValue(findUser);
+                    if (value != null && modelName == dbPropName && !value.Equals(value2))
+                    {
+                        PropertyInfo propertyChange = findUser.GetType().GetProperty(dbPropName);
+                        if (propertyChange != null && propertyChange.CanWrite)
+                        {
+                            if(value.GetType() == typeof(List<string>))
+                            {
+                                List<string> valueList = new List<string>();
+                                var objToList = (List<string>)value;
+                                foreach(var item in objToList)
+                                {
+                                    valueList.Add(item.ToString());
+                                }
+                                propertyChange.SetValue(findUser, valueList);
+                                //Console.WriteLine($"{property.Name}: {value}, value2: {findUser} v: {objToList}");
+                                break;
+                            }
+                            else
+                            {
+                                propertyChange.SetValue(findUser, value);
+                                //Console.WriteLine($"{property.Name}: {value}, value1: {findUser} t1: {value.GetType()} t2: {typeof(List<string>)}");
+                            }
+                        }
+                        break;
+                    }else if (value != null && modelName == dbPropName && value.Equals(value2))
+                    {
+                        break;
+                    }
+                }
+            }
+                        
+            await _userRepository.SaveChangesAsync();
+
+            return new SuccessResponse<UpdateUserDto>
+            {
+                Data = null,
+                code = 201,
+                Message = ResponseMessages.CourseUpdated,
+                ExtraInfo = "",
+
+            };
         }
         public async Task<SuccessResponse<ForgotPasswordDto>> ForgotPassword(ForgotPasswordDto model)
         {
@@ -297,70 +362,6 @@ namespace Application.Services.Implementations
             var verifyEmailMessage = $"Please click the following link to verify your email {verifyLink}";
             string messageBody = string.Format(emailTemplate, subject, String.Format("{0:dddd, MMMM d, yyyy} ", DateTime.UtcNow), findUser.LastName, findUser.Email, verifyLink);
             SendEmailVerificationToken(findUser.Email, "Email verification", messageBody);
-        }
-
-        public async Task<SuccessResponse<UpdateUserDto>> UpdateUser(string email, UpdateUserDto model)
-        {
-            var findUser = await _userRepository.FirstOrDefault(x => x.Email == email);
-
-            if (findUser == null)
-                throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserNotFound);
-
-            Type type = model.GetType();
-            PropertyInfo[] properties = type.GetProperties();
-
-            Type typeDB = findUser.GetType();
-            PropertyInfo[] propertiesDB = typeDB.GetProperties();
-
-            foreach (PropertyInfo property in properties)
-            {
-                string modelName = property.Name;
-                object? value = property.GetValue(model);
-                foreach (PropertyInfo propertyDB in propertiesDB)
-                {
-                    string dbPropName = propertyDB.Name;
-                    if (dbPropName == "Id") continue;
-                    object value2 = propertyDB.GetValue(findUser);
-                    if (value != null && modelName == dbPropName && !value.Equals(value2))
-                    {
-                        //findUserName = value.ToString();
-                        PropertyInfo propertyChange = findUser.GetType().GetProperty(dbPropName);
-                        if (propertyChange != null && propertyChange.CanWrite)
-                        {
-                            if(value.GetType() == typeof(object))
-                            {
-                                var objToList = (List<string>)value;
-                                propertyChange.SetValue(findUser, objToList);
-                                //Console.WriteLine($"{property.Name}: {value}, value2: {findUser} v: {objToList}");
-                                break;
-                            }
-                            else
-                            {
-                                propertyChange.SetValue(findUser, value);
-                                //Console.WriteLine($"{property.Name}: {value}, value1: {findUser} v: {value.ToString()}");
-                            }
-                        }
-                        break;
-                    }else if (value != null && modelName == dbPropName && value.Equals(value2))
-                    {
-                        break;
-                    }
-                }
-            }
-
-            //model.ApplyTo(findUser, ModelState);
-            await _userRepository.SaveChangesAsync();
-
-            //var response = _mapper.Map<UpdateUserDto>(model);
-
-            return new SuccessResponse<UpdateUserDto>
-            {
-                Data = null,
-                code = 201,
-                Message = ResponseMessages.CourseUpdated,
-                ExtraInfo = "",
-
-            };
         }
     }
 }
