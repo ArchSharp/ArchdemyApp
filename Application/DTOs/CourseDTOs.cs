@@ -20,9 +20,19 @@ namespace Application.DTOs
         public int ContentVolume { get; set; }
     }
 
-    public class GetCourseDto : CreateCourseDto
+    public class GetCourseDto
     {
-        //public string courseId { get; set; }
+        public string CourseId { get; set; }
+        public string Author { get; set; }
+        public string AuthorId { get; set; }
+        public string CategoryId { get; set; }
+        public bool IsPremium { get; set; }
+        public double Cost { get; set; }
+        public string Title { get; set; }
+        public string Image { get; set; }
+        public int PurchaseNumber { get; set; }
+        public int ModulesNumber { get; set; }
+        public int ContentVolume { get; set; }
     }
 
     public class CategoryCoursesDto : CreateCourseDto
@@ -30,9 +40,19 @@ namespace Application.DTOs
     
     }
 
-    public class UpdateCourseDto : CreateCourseDto
+    public class UpdateCourseDto
     {
         public Guid CourseId { get; set; }
+        public string? Author { get; set; }
+        public string? AuthorId { get; set; }
+        public string? CategoryId { get; set; }
+        public bool IsPremium { get; set; }
+        public long Cost { get; set; }
+        public string? Title { get; set; }
+        public string? Image { get; set; }
+        public int? PurchaseNumber { get; set; }
+        public int? ModulesNumber { get; set; }
+        public int? ContentVolume { get; set; }
     }
 
     public class CoursePaymentPayloadDto

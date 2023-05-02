@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Utilities;
+using Microsoft.AspNetCore.Http;
 
 namespace Domain.Entities
 {
@@ -25,6 +27,9 @@ namespace Domain.Entities
         public string Password { get; set; }
         public bool EmailConfirmed { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
+        //[FileMaxResolutionAttributes(1)]
+        //[FileAllowedExtensionsAttributes(new string[] {".jpg",".png","jpeg"})]
+        //public IFormFile? Image { get; set; }
         public List<string>? CartCourses { get; set; }
         public List<string>? PurchasedCourses { get; set; }
         public string? TwoFactorSecretKey { get; set; }

@@ -181,11 +181,13 @@ namespace Application.Services.Implementations
                             {
                                 List<string> valueList = new List<string>();
                                 var objToList = (List<string>)value;
-                                foreach(var item in objToList)
+                                var modelToList = (List<string>)value2;
+                                foreach (var item in objToList)
                                 {
-                                    valueList.Add(item.ToString());
+                                    //valueList.Add(item.ToString());
+                                    modelToList.Add(item.ToString());
                                 }
-                                propertyChange.SetValue(findUser, valueList);
+                                propertyChange.SetValue(findUser, modelToList);
                                 //Console.WriteLine($"{property.Name}: {value}, value2: {findUser} v: {objToList}");
                                 break;
                             }

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace Application.Services.Implementations
     {
         private readonly IRepository<Course> _courseRepository;
         private readonly IMapper _mapper;
-        public CourseService(IRepository<Course> courseRepository, IMapper mapper) { 
+        public CourseService(IRepository<Course> courseRepository, IMapper mapper) {
             _courseRepository = courseRepository;
             _mapper = mapper;
         }        
@@ -103,13 +104,40 @@ namespace Application.Services.Implementations
                 throw new RestException(HttpStatusCode.NotFound, ResponseMessages.CourseNotFound);
             }
 
-            /*var updatedCourse = _mapper.Map<Course>(model);
-            updatedCourse.CourseId = model.CourseId;
-            */
-            
-            _mapper.Map(model, findCourse);
-            var updatedResponse = _mapper.Map<UpdateCourseDto>(model);
+            //_mapper.Map(model, findCourse);
             //_courseRepository.Update(updatedCourse);
+            Type type = model.GetType();
+            PropertyInfo[] properties = type.GetProperties();
+
+            Type typeDB = findCourse.GetType();
+            PropertyInfo[] propertiesDB = typeDB.GetProperties();
+
+            foreach (PropertyInfo property in properties)
+            {
+                string modelName = property.Name;
+                object? value = property.GetValue(model);
+                foreach (PropertyInfo propertyDB in propertiesDB)
+                {
+                    string dbPropName = propertyDB.Name;
+                    if (dbPropName == "Id") continue;
+                    object value2 = propertyDB.GetValue(findCourse);
+                    if (value != null && modelName == dbPropName && !value.Equals(value2))
+                    {
+                        PropertyInfo propertyChange = findCourse.GetType().GetProperty(dbPropName);
+                        if (propertyChange != null && propertyChange.CanWrite)
+                        {                           
+                                propertyChange.SetValue(findCourse, value);
+                                //Console.WriteLine($"{property.Name}: {value}, value1: {findCourse} t1: {value.GetType()} t2: {typeof(List<string>)}");                            
+                        }
+                        break;
+                    }
+                    else if (value != null && modelName == dbPropName && value.Equals(value2))
+                    {
+                        break;
+                    }
+                }
+            }
+            var updatedResponse = _mapper.Map<UpdateCourseDto>(findCourse);
             await _courseRepository.SaveChangesAsync();
 
 

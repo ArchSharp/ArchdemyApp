@@ -12,8 +12,10 @@ namespace Application.Mapper
     internal class CourseModuleMapper : Profile
     {
         public CourseModuleMapper() { 
-            CreateMap<CourseModule, CourseModuleDtos>().ReverseMap();            
+            CreateMap<CourseModule, CreateCourseModuleDtos>().ReverseMap();            
             CreateMap<Topic, TopicDto>().ReverseMap();
+            CreateMap<CourseModule, UpdateCourseModuleDto>().ReverseMap();
+            CreateMap<CourseModule, GetCourseModuleDto>().ReverseMap();
         }
     }
 }

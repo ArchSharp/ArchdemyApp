@@ -10,7 +10,9 @@ namespace Application.Services.Interfaces
 {
     public interface ICourseModules : IAutoDependencyService
     {
-        Task<SuccessResponse<CourseModuleDtos>> CreateCourseModule(CourseModuleDtos model);
-        Task<SuccessResponse<CourseModuleDtos>> UpdateCourseModule(CourseModuleDtos model);
+        Task<SuccessResponse<CreateCourseModuleDtos>> CreateCourseModule(CreateCourseModuleDtos model);
+        Task<SuccessResponse<UpdateCourseModuleDto>> AddTopicToCourseModule(UpdateCourseModuleDto model);
+        Task<SuccessResponse<GetCourseModuleDto>> GetSingleCourseModule(Guid courseModuleId);
+        Task<SuccessResponse<ICollection<GetCourseModuleDto>>> GetCourseAllModules(Guid courseId);
     }
 }

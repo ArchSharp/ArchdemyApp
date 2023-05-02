@@ -12,7 +12,7 @@ namespace Domain.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public Guid CourseModuleId { get; set; }
         public Guid CourseId { get; set; }
         public string Name { get; set; }
         public ICollection<Topic> Topics { get; set; }
@@ -23,7 +23,7 @@ namespace Domain.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public Guid TopicId { get; set; }
         public string Name { get; set; }
         public string Author { get; set; }
         public string Url { get; set; }
