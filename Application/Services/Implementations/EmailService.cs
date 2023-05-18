@@ -52,7 +52,7 @@ namespace Application.Services.Implementations
             return mailTemplate;
         }
 
-        public void SendEmail(string to, string subject, string body)
+        public async void SendEmail(string to, string subject, string body)
         {
             var emailObject = new MimeMessage();
             emailObject.From.Add(MailboxAddress.Parse(_sender.Email));
@@ -60,8 +60,10 @@ namespace Application.Services.Implementations
             emailObject.Subject = subject;
             emailObject.Body = new TextPart(TextFormat.Html) { Text = body };
 
+            //port 587 uses SecureSocketOptions.startTls
+            //port 465 uses SecureSocketOptions.Auto
             using var smtp = new SmtpClient();
-            smtp.Connect(_sender.Host, _sender.Port, SecureSocketOptions.StartTls);
+            smtp.Connect(_sender.Host, _sender.Port, SecureSocketOptions.Auto);
             smtp.Authenticate(_sender.Email, _sender.Password);
             smtp.Send(emailObject);
             smtp.Disconnect(true);

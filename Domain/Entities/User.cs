@@ -15,7 +15,6 @@ namespace Domain.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-        public string UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -30,6 +29,7 @@ namespace Domain.Entities
         //[FileMaxResolutionAttributes(1)]
         //[FileAllowedExtensionsAttributes(new string[] {".jpg",".png","jpeg"})]
         //public IFormFile? Image { get; set; }
+        public bool IsInstructor { get; set; }
         public List<string>? CartCourses { get; set; }
         public List<string>? PurchasedCourses { get; set; }
         public string? TwoFactorSecretKey { get; set; }

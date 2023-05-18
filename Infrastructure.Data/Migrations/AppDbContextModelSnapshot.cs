@@ -33,9 +33,8 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CategoryId")
                         .IsRequired()
@@ -175,6 +174,9 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsInstructor")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsTwoFactorEnabled")
                         .HasColumnType("boolean");
 
@@ -212,10 +214,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("VerificationToken")
                         .HasColumnType("text");

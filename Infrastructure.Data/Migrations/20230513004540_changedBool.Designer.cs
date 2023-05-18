@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230429035400_nullableColumn")]
-    partial class nullableColumn
+    [Migration("20230513004540_changedBool")]
+    partial class changedBool
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,9 +36,8 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CategoryId")
                         .IsRequired()
@@ -80,7 +79,7 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.CourseModule", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("CourseModuleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -91,7 +90,7 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("CourseModuleId");
 
                     b.HasIndex("CourseId");
 
@@ -121,7 +120,7 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.Topic", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("TopicId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -140,7 +139,7 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("TopicId");
 
                     b.HasIndex("CourseModuleId");
 
@@ -177,6 +176,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsInstructor")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsTwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -215,10 +217,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("VerificationToken")
                         .HasColumnType("text");

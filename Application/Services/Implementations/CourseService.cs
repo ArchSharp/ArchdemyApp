@@ -19,18 +19,31 @@ namespace Application.Services.Implementations
     public class CourseService : ICourseService
     {
         private readonly IRepository<Course> _courseRepository;
+        private readonly IRepository<User> _userRepository;
         private readonly IMapper _mapper;
-        public CourseService(IRepository<Course> courseRepository, IMapper mapper) {
+        public CourseService(IRepository<Course> courseRepository, IMapper mapper, IRepository<User> userRepository)
+        {
             _courseRepository = courseRepository;
             _mapper = mapper;
-        }        
+            _userRepository = userRepository;
+        }
 
         public async Task<SuccessResponse<CreateCourseDto>> CreateCourse(CreateCourseDto model)
         {
+            var getUser = await _userRepository.FirstOrDefault(x => x.Id == model.AuthorId);
             var newCourse = _mapper.Map<Course>(model);
+
+            if (getUser == null)
+                throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserNotFound);
 
             await _courseRepository.AddAsync(newCourse);
             await _courseRepository.SaveChangesAsync();
+
+            if (!getUser.IsInstructor)
+            {
+                getUser.IsInstructor = true;
+                await _userRepository.SaveChangesAsync();
+            }
 
             var newCourseResponse = _mapper.Map<CreateCourseDto>(newCourse);
 
@@ -104,8 +117,6 @@ namespace Application.Services.Implementations
                 throw new RestException(HttpStatusCode.NotFound, ResponseMessages.CourseNotFound);
             }
 
-            //_mapper.Map(model, findCourse);
-            //_courseRepository.Update(updatedCourse);
             Type type = model.GetType();
             PropertyInfo[] properties = type.GetProperties();
 
@@ -127,7 +138,6 @@ namespace Application.Services.Implementations
                         if (propertyChange != null && propertyChange.CanWrite)
                         {                           
                                 propertyChange.SetValue(findCourse, value);
-                                //Console.WriteLine($"{property.Name}: {value}, value1: {findCourse} t1: {value.GetType()} t2: {typeof(List<string>)}");                            
                         }
                         break;
                     }

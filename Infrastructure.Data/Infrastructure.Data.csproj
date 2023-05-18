@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="DbContext\Configuration\" />
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>

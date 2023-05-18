@@ -33,7 +33,7 @@ namespace Application.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IJwtService _jwtService;
         private readonly IEmailService _emailService;
-        private readonly ITwoFactorAuthService _twoFactorAuthService;
+        //private readonly ITwoFactorAuthService _twoFactorAuthService;
         private readonly EmailVerificationUrls _emailVerificationUrls;
 
         public UserService(
@@ -51,7 +51,7 @@ namespace Application.Services.Implementations
             _emailService = emailService;
             _refreshTokenRepository = refreshTokenRepository;
             _emailVerificationUrls = emailVerificationUrls.Value;
-            _twoFactorAuthService = twoFactorAuthService;
+            //_twoFactorAuthService = twoFactorAuthService;
         }
         public async Task<SuccessResponse<CreateUserDto>> Register(CreateUserDto model)
         {

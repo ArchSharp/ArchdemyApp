@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class firstMigration : Migration
+    public partial class firstGration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     CourseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AuthorId = table.Column<string>(type: "text", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
                     CategoryId = table.Column<string>(type: "text", nullable: false),
                     Author = table.Column<string>(type: "text", nullable: false),
                     IsPremium = table.Column<bool>(type: "boolean", nullable: false),
@@ -54,7 +54,6 @@ namespace Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
@@ -66,9 +65,10 @@ namespace Infrastructure.Data.Migrations
                     Password = table.Column<string>(type: "text", nullable: false),
                     EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     IsTwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    CartCourses = table.Column<List<string>>(type: "text[]", nullable: false),
-                    PurchasedCourses = table.Column<List<string>>(type: "text[]", nullable: false),
-                    TwoFactorSecretKey = table.Column<string>(type: "text", nullable: false),
+                    IsInstructor = table.Column<bool>(type: "boolean", nullable: true),
+                    CartCourses = table.Column<List<string>>(type: "text[]", nullable: true),
+                    PurchasedCourses = table.Column<List<string>>(type: "text[]", nullable: true),
+                    TwoFactorSecretKey = table.Column<string>(type: "text", nullable: true),
                     VerificationToken = table.Column<string>(type: "text", nullable: true),
                     VerifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     PasswordResetToken = table.Column<string>(type: "text", nullable: true),
@@ -85,13 +85,13 @@ namespace Infrastructure.Data.Migrations
                 name: "CoursesModules",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CourseModuleId = table.Column<Guid>(type: "uuid", nullable: false),
                     CourseId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CoursesModules", x => x.Id);
+                    table.PrimaryKey("PK_CoursesModules", x => x.CourseModuleId);
                     table.ForeignKey(
                         name: "FK_CoursesModules_Courses_CourseId",
                         column: x => x.CourseId,
@@ -104,7 +104,7 @@ namespace Infrastructure.Data.Migrations
                 name: "Topic",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TopicId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Author = table.Column<string>(type: "text", nullable: false),
                     Url = table.Column<string>(type: "text", nullable: false),
@@ -112,12 +112,12 @@ namespace Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Topic", x => x.Id);
+                    table.PrimaryKey("PK_Topic", x => x.TopicId);
                     table.ForeignKey(
                         name: "FK_Topic_CoursesModules_CourseModuleId",
                         column: x => x.CourseModuleId,
                         principalTable: "CoursesModules",
-                        principalColumn: "Id",
+                        principalColumn: "CourseModuleId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
