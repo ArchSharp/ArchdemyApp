@@ -14,9 +14,9 @@ namespace Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid CourseModuleId { get; set; }
         public Guid CourseId { get; set; }
-        public string Name { get; set; }
-        public ICollection<Topic> Topics { get; set; }
-        public Course Course { get; set; }
+        public string Name { get; set; } = null!;
+        public ICollection<Topic> Topics { get; set; } = null!;
+        public Course Course { get; set; } = null!;
     }
 
     public class Topic
@@ -24,12 +24,12 @@ namespace Domain.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid TopicId { get; set; }
-        public string Name { get; set; }
-        public string Author { get; set; }
-        public string Url { get; set; }
+        public string Name { get; set; } = null!;
+        public string Author { get; set; } = null!;
+        public string Url { get; set; } = null!;
 
         //Navigation property
-        public CourseModule CourseModule { get; set; }
+        public CourseModule CourseModule { get; set; } = null!;
         public Guid CourseModuleId { get; set; }
     }
 

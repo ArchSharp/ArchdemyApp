@@ -131,10 +131,10 @@ namespace Application.Services.Implementations
                 {
                     string dbPropName = propertyDB.Name;
                     if (dbPropName == "Id") continue;
-                    object value2 = propertyDB.GetValue(findCourse);
+                    object value2 = propertyDB.GetValue(findCourse)!;
                     if (value != null && modelName == dbPropName && !value.Equals(value2))
                     {
-                        PropertyInfo propertyChange = findCourse.GetType().GetProperty(dbPropName);
+                        PropertyInfo propertyChange = findCourse.GetType().GetProperty(dbPropName)!;
                         if (propertyChange != null && propertyChange.CanWrite)
                         {                           
                                 propertyChange.SetValue(findCourse, value);

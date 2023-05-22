@@ -8,6 +8,6 @@ namespace Domain.Entities.PayStack
 {
     public class PayStackSettings
     {
-        public string SecretKey { get; set; }
+        public string SecretKey { get; set; } = null!;
     }
 }

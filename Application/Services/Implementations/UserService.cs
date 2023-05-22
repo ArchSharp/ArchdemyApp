@@ -22,6 +22,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 //using System.Web.Mvc;
 
 namespace Application.Services.Implementations
@@ -33,25 +34,24 @@ namespace Application.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IJwtService _jwtService;
         private readonly IEmailService _emailService;
-        //private readonly ITwoFactorAuthService _twoFactorAuthService;
-        private readonly EmailVerificationUrls _emailVerificationUrls;
+        private readonly INotificationService _notificationService;
+        private readonly ITwoFactorAuthService _twoFactorAuthService;
 
         public UserService(
             IRepository<User> userRepository,
             IMapper mapper, IJwtService jwtService,
             IEmailService emailService,
             IRepository<RefreshToken> refreshTokenRepository,
-            IOptions<EmailVerificationUrls> emailVerificationUrls,
-            ITwoFactorAuthService twoFactorAuthService
-        )
+            ITwoFactorAuthService twoFactorAuthService,
+            INotificationService notificationService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _jwtService = jwtService;
             _emailService = emailService;
             _refreshTokenRepository = refreshTokenRepository;
-            _emailVerificationUrls = emailVerificationUrls.Value;
-            //_twoFactorAuthService = twoFactorAuthService;
+            _notificationService = notificationService;
+            _twoFactorAuthService = twoFactorAuthService;
         }
         public async Task<SuccessResponse<CreateUserDto>> Register(CreateUserDto model)
         {
@@ -64,9 +64,6 @@ namespace Application.Services.Implementations
             model.Password = hashPassword;
 
             var emailVerifyToken = CreateRandomToken();
-
-            var emailTemplate = _emailService.LoadTemplate("verifyEmail");
-            var subject = "Email verification";
 
             //{0} : Subject  
             //{1} : DateTime  
@@ -83,7 +80,8 @@ namespace Application.Services.Implementations
             await _userRepository.AddAsync(newUser);
             await _userRepository.SaveChangesAsync();
 
-            SendMailToUser(newUser, emailVerifyToken);
+            //SendMailToUser(newUser, emailVerifyToken);
+            _notificationService.SendVerificationEmail(newUser.Email, newUser.LastName, emailVerifyToken);
             var newUserResponse = _mapper.Map<CreateUserDto>(newUser);
 
             return new SuccessResponse<CreateUserDto>
@@ -130,7 +128,7 @@ namespace Application.Services.Implementations
                     findUser.VerificationToken = emailVerifyToken;
                     findUser.VerifiedAt = DateTime.UtcNow;
                     await _userRepository.SaveChangesAsync();
-                    SendMailToUser(findUser, emailVerifyToken);
+                    //SendMailToUser(findUser, emailVerifyToken);
 
                     throw new RestException(HttpStatusCode.Forbidden, ResponseMessages.UserEmailNotVerified);
                 }
@@ -171,10 +169,10 @@ namespace Application.Services.Implementations
                 {
                     string dbPropName = propertyDB.Name;
                     if (dbPropName == "Id") continue;
-                    object value2 = propertyDB.GetValue(findUser);
+                    object value2 = propertyDB.GetValue(findUser)!;
                     if (value != null && modelName == dbPropName && !value.Equals(value2))
                     {
-                        PropertyInfo propertyChange = findUser.GetType().GetProperty(dbPropName);
+                        PropertyInfo propertyChange = findUser.GetType().GetProperty(dbPropName)!;
                         if (propertyChange != null && propertyChange.CanWrite)
                         {
                             if(value.GetType() == typeof(List<string>))
@@ -227,7 +225,13 @@ namespace Application.Services.Implementations
             var verifyEmailMessage = "Please click the following link " +
                                                        "to reset your password https://localhost:7219/api/v1/Auth/ResetPassword?email="
                                                        + model.Email + "&token=" + resetToken;
-            SendEmailVerificationToken(model.Email, "Password reset", verifyEmailMessage);
+            Email email = new Email()
+            {
+                To = model.Email,
+                Body = verifyEmailMessage,
+                Subject = "Password reset",
+            };
+            //SendEmailVerificationToken(email);
             
             findUser.PasswordResetToken = resetToken;
             findUser.ResetTokenExpires= DateTime.UtcNow.ToUniversalTime().AddDays(1);
@@ -334,17 +338,6 @@ namespace Application.Services.Implementations
         {
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }
-        private void SendEmailVerificationToken(string receiverEmail, string subject, string body)
-        {
-            try
-            {
-                _emailService.SendEmail(receiverEmail, subject, body);
-            }
-            catch (Exception ex)
-            {
-                throw new RestException(HttpStatusCode.NotFound, ex.ToString());
-            }
-        }
         private async Task InsertRefreshToken(Guid userId, string refreshtoken)
         {
             var newRefreshToken = new RefreshToken
@@ -355,15 +348,6 @@ namespace Application.Services.Implementations
             };
             await _refreshTokenRepository.AddAsync(newRefreshToken);
             await _refreshTokenRepository.SaveChangesAsync();
-        }
-        private void SendMailToUser(User findUser, string emailVerifyToken)
-        {
-            var emailTemplate = _emailService.LoadTemplate("verifyEmail");
-            var subject = "Email verification";
-            var verifyLink = _emailVerificationUrls.Verify.Replace("[Email]", findUser.Email).Replace("[Token]", emailVerifyToken);
-            var verifyEmailMessage = $"Please click the following link to verify your email {verifyLink}";
-            string messageBody = string.Format(emailTemplate, subject, String.Format("{0:dddd, MMMM d, yyyy} ", DateTime.UtcNow), findUser.LastName, findUser.Email, verifyLink);
-            SendEmailVerificationToken(findUser.Email, "Email verification", messageBody);
-        }
+        }        
     }
 }

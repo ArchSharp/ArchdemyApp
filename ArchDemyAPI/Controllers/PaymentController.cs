@@ -17,13 +17,17 @@ namespace Server.Controllers;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/Payment")]
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public class PaymentController : Controller
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 {
     private readonly IStripeService _stripeService;
     private readonly IPaystackService _paystackService;
     private readonly IConfiguration _configuration;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public PaymentController(IConfiguration configuration, IStripeService stripeService, IPaystackService paystackService)
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
         _configuration = configuration;
         _stripeService = stripeService;

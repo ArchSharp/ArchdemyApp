@@ -2,8 +2,8 @@
 {
     public class TwilioFnParameters
     {
-        public string AccountSID { get; set; }
-        public string AccountToken { get; set; }
-        public string PhoneNumber { get; set; }
+        public string AccountSID { get; set; } = null!;
+        public string AccountToken { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
     }
 }

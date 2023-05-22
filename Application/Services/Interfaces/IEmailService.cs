@@ -1,5 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Helpers;
+using Domain.Entities;
+using Identity.Data.Dtos.Request.MessageBroker;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +12,9 @@ namespace Application.Services.Interfaces
 {
     public interface IEmailService : IAutoDependencyService
     {
-        void SendEmail(string to, string subject,string body);
-        string GetEmailTemplate<T>(string emailTemplate, T emailTemplateModel);
-        string LoadTemplate(string emailTemplate);
+        void SendEmailUsingMailKit(EmailRequest email);
+        //Task<SuccessResponse<object>> SendEmailUsingSendGrid(Email email);
+        string GetEmailTemplate<T>(string emailTemplate, T emailTemplateModel);        
 
     }
 }

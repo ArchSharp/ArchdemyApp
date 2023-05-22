@@ -8,18 +8,18 @@ namespace Application.DTOs
 {
     public class EmailDtos
     {
-        public string To { get; set; }
-        public string Subject { get; set; }
-        public string Body { get; set; }
+        public string To { get; set; } = null!;
+        public string Subject { get; set; } = null!;
+        public string Body { get; set; } = null!;
 
     }
 
     public class EmailSender
     {
-        public string Host { get; set; }
+        public string Host { get; set; } = null!;
         public int Port { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Email { get; set; } = null!;
+        public string Password { get; set; } = null!;
 
     }
 }

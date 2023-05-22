@@ -8,7 +8,7 @@ namespace Domain.Entities
 {
     public class EmailVerificationUrls
     {
-        public string Verify { get; set; }
-        public string Reset { get; set; }
+        public string Verify { get; set; } = null!;
+        public string Reset { get; set; } = null!;
     }
 }

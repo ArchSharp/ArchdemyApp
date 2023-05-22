@@ -8,18 +8,18 @@ namespace Application.DTOs
 {
     public class AddCustomerResponseDto
     {
-        public string CustomerId { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
+        public string CustomerId { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public string Email { get; set; } = null!;
     }
 
     public class StripePaymentResponse
     {
-        public string CustomerId { get; set; }
-        public string ReceiptEmail { get; set; }
-        public string Description { get; set; }
-        public string Currency { get; set; }
+        public string CustomerId { get; set; } = null!;
+        public string ReceiptEmail { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string Currency { get; set; } = null!;
         public long Amount { get; set; }
-        public string PaymentId { get; set; }
+        public string PaymentId { get; set; } = null!;
     }
 }

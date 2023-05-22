@@ -83,22 +83,29 @@ namespace Infrastructure.Repositories.Implementations
         }
         public Task<TEntity> SingleOrDefault(Expression<Func<TEntity, bool>> predicate)
         {
-            return _context.Set<TEntity>().SingleOrDefaultAsync(predicate);
+            return _context.Set<TEntity>().SingleOrDefaultAsync(predicate)!;
         }
 
+        #pragma warning disable CS8619
         public Task<TEntity> SingleOrDefaultNoTracking(Expression<Func<TEntity, bool>> predicate)
         {
             return _context.Set<TEntity>().AsNoTracking().SingleOrDefaultAsync(predicate);
         }
+        #pragma warning restore CS8619
 
+        #pragma warning disable CS8619
         public Task<TEntity> FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
         {
             return _context.Set<TEntity>().FirstOrDefaultAsync(predicate);
         }
+        #pragma warning restore CS8619
+
+        #pragma warning disable CS8619
         public Task<TEntity> FirstOrDefaultNoTracking(Expression<Func<TEntity, bool>> predicate)
         {
             return _context.Set<TEntity>().AsNoTracking().FirstOrDefaultAsync(predicate);
         }
+        #pragma warning restore CS8619
         public void UpdateRange(IEnumerable<TEntity> entity)
         {
             _context.Set<TEntity>().UpdateRange(entity);

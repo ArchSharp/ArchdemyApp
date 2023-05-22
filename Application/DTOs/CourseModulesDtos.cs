@@ -12,23 +12,23 @@ namespace Application.DTOs
     {
         //public Guid Id { get; set; }
         public Guid CourseId { get; set; }
-        public string Name { get; set; }
-        public ICollection<TopicDto> Topics { get; set; }
+        public string Name { get; set; } = null!;
+        public ICollection<TopicDto> Topics { get; set; } = null!;
     }
     public class UpdateCourseModuleDto
     {
         public Guid CourseModuleId { get; set; }
         public Guid CourseId { get; set; }
-        public string Name { get; set; }
-        public ICollection<TopicDto> Topics { get; set; }
+        public string Name { get; set; } = null!;
+        public ICollection<TopicDto> Topics { get; set; } = null!;
     }
 
     public class GetCourseModuleDto
     {
         public Guid CourseModuleId { get; set; }
         public Guid CourseId { get; set; }
-        public string Name { get; set; }
-        public ICollection<TopicDto> Topics { get; set; }
+        public string Name { get; set; } = null!;
+        public ICollection<TopicDto> Topics { get; set; } = null!;
     }
     /*
     public class GetCourseAllModules
@@ -39,9 +39,9 @@ namespace Application.DTOs
     public class TopicDto
     {
         //public Guid Id { get; set; }
-        public string Author { get; set; }
-        public string Name { get; set; }
-        public string Url { get; set; }
+        public string Author { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public string Url { get; set; } = null!;
 
     }
 }

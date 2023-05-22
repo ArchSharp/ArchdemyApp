@@ -18,6 +18,7 @@ using Domain.Entities.Stripe;
 using Domain.Entities.PayStack;
 using System.Threading.RateLimiting;
 using Identity.Data.Models;
+using SendGrid.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,8 @@ builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Str
 builder.Services.Configure<PayStackSettings>(builder.Configuration.GetSection("PayStackSettings"));
 builder.Services.Configure<GoogleTwoFactorAuthSettings>(builder.Configuration.GetSection("GoogleTwoFactorAuthSettings"));
 builder.Services.Configure<TwilioFnParameters>(builder.Configuration.GetSection("TwilioFnParameters"));
+builder.Services.Configure<SendGridEmailSettings>(builder.Configuration.GetSection("SendGridEmailSettings"));
+builder.Services.Configure<RabbitMQMessageBroker>(builder.Configuration.GetSection("RabbitMQMessageBroker"));
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacContainerModule()));
@@ -41,7 +44,14 @@ builder.Services.ConfigureSwagger();
 
 
 //builder.Services.AddScoped<HttpContextAccessor>().AddScoped<ITwoFactorAuthService, TwoFactorAuthService>();
+/*builder.Services.AddSendGrid(options =>
+{
+    options.ApiKey = builder.Configuration
+    .GetSection("SendGridEmailSettings").GetValue<string>("APIKey");
+});*/
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddHostedService<ConsumerHostedService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

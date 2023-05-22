@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShareLoanApp.Application.Services.Interfaces
+namespace Application.Services.Interfaces
 {
     public interface ILoggerManager
     {
