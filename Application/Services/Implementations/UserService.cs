@@ -65,6 +65,8 @@ namespace Application.Services.Implementations
 
             var emailVerifyToken = CreateRandomToken();
 
+            //Console.WriteLine($"image path: {_emailService.ImageCID("mail", "png")}");
+
             //{0} : Subject  
             //{1} : DateTime  
             //{2} : Email  
@@ -128,7 +130,7 @@ namespace Application.Services.Implementations
                     findUser.VerificationToken = emailVerifyToken;
                     findUser.VerifiedAt = DateTime.UtcNow;
                     await _userRepository.SaveChangesAsync();
-                    //SendMailToUser(findUser, emailVerifyToken);
+                    _notificationService.SendVerificationEmail(findUser.Email, findUser.LastName, emailVerifyToken);
 
                     throw new RestException(HttpStatusCode.Forbidden, ResponseMessages.UserEmailNotVerified);
                 }
@@ -221,21 +223,13 @@ namespace Application.Services.Implementations
             if (findUser == null)
                 throw new RestException(HttpStatusCode.NotFound, ResponseMessages.UserNotFound);
             
-            var resetToken = CreateRandomToken();
-            var verifyEmailMessage = "Please click the following link " +
-                                                       "to reset your password https://localhost:7219/api/v1/Auth/ResetPassword?email="
-                                                       + model.Email + "&token=" + resetToken;
-            Email email = new Email()
-            {
-                To = model.Email,
-                Body = verifyEmailMessage,
-                Subject = "Password reset",
-            };
-            //SendEmailVerificationToken(email);
+            var resetToken = CreateRandomToken();            
             
             findUser.PasswordResetToken = resetToken;
             findUser.ResetTokenExpires= DateTime.UtcNow.ToUniversalTime().AddDays(1);
             await _userRepository.SaveChangesAsync();
+
+            _notificationService.SendPasswordResetEmail(findUser.Email, findUser.LastName, resetToken);
 
             return new SuccessResponse<ForgotPasswordDto>
             {

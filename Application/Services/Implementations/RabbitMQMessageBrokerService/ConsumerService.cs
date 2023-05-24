@@ -27,6 +27,8 @@ namespace Application.Services.Implementations.RabbitMQMessageBrokerService
         private readonly IConnection _connection;
         private readonly ILogger _logger;
 
+        private int failed = 0;
+
         public ConsumerService(
             IEmailService emailService,
             IRabbitMQConfig rabbitMQConfig,
@@ -48,29 +50,43 @@ namespace Application.Services.Implementations.RabbitMQMessageBrokerService
             var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.Received += async (model, eventArgs) =>
             {
-                var body = eventArgs.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                _logger.LogInformation($"working: {message}");
-                HandleMessage(message);
-                channel.BasicAck(eventArgs.DeliveryTag, false);
+                try
+                {
+                    //if (failed == 0)
+                    //{
+                       // _logger.LogInformation($"Retrying again {failed}");
+                        var body = eventArgs.Body.ToArray();
+                        var message = Encoding.UTF8.GetString(body);
+                        var verificationPayload = JsonConvert.DeserializeObject<Notification<EmailRequest>>(message);
+                        HandleMessage(verificationPayload);
+                        channel.BasicAck(eventArgs.DeliveryTag, false);
+                        _logger.LogInformation($"Message sent to: {verificationPayload.Data.ReceiverEmail}");
+                    //}
+                }
+                catch (Exception ex)
+                {
+                    failed++;
+                    _logger.LogInformation($"Failed to process message: {ex.Message}");
+                    
+                    // Requeue the failed message
+                    channel.BasicNack(deliveryTag: eventArgs.DeliveryTag, multiple: false, requeue: true);
+                    _logger.LogInformation($"Failed message requeued successfully.");
+                }                
             };
             channel.BasicConsume(queue, false, consumer);
         }
 
-        private Task HandleMessage(string message)
+        private Task HandleMessage(Notification<EmailRequest> message)
         {
-            JObject json = JObject.Parse(message);
-            string type = json.Value<string>("Type").ToLower();
+            string type = message.Type.ToLower();
             switch (type)
             {
                 case "email":
-                    var verificationPayload = JsonConvert.DeserializeObject<Notification<EmailRequest>>(message);
-                    _emailService.SendEmailUsingMailKit(verificationPayload.Data);
+                    _emailService.SendEmailUsingMailKit(message.Data);
                     break;
                 default:
                     break;
             }
-            //throw new NotImplementedException();
             return null;
         }
 

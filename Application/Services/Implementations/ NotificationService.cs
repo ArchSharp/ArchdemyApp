@@ -29,11 +29,11 @@ namespace Application.Services.Implementations
             EmailRequest request = new EmailRequest();
             request.ReceiverEmail = receiverEmail;
             request.EmailSubject = "Forget Password";
-            request.TemplateName = "Reset";
+            request.TemplateName = "resetPassword";
 
             string link = _emailVerificationUrls.Reset;
             token = HttpUtility.UrlEncode(token);
-            link = link.Replace("[token]", token);
+            link = link.Replace("[Token]", token).Replace("[Email]", receiverEmail);
             request.Variables = new Dictionary<string, string>(){
                 {"name", name},
                 {"link", link}

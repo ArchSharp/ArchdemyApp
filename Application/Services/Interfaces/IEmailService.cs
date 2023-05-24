@@ -14,7 +14,7 @@ namespace Application.Services.Interfaces
     {
         void SendEmailUsingMailKit(EmailRequest email);
         //Task<SuccessResponse<object>> SendEmailUsingSendGrid(Email email);
-        string GetEmailTemplate<T>(string emailTemplate, T emailTemplateModel);        
-
+        string GetEmailTemplate<T>(string emailTemplate, T emailTemplateModel);
+        string ImageCID(string imageName, string extension);
     }
 }
