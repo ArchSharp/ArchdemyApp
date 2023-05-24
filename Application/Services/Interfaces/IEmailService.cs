@@ -1,7 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Helpers;
 using Domain.Entities;
-using Identity.Data.Dtos.Request.MessageBroker;
 using System;
 using System.Collections.Generic;
 using System.Linq;

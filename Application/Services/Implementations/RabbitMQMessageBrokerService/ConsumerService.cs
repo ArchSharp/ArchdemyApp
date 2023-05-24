@@ -2,7 +2,6 @@ using System.Text;
 using Application.Services.Interfaces.IRabbitMQMessageBroker;
 using Application.Services.MessageBrokerConfig;
 using Domain.Entities;
-using Identity.Data.Dtos.Request.MessageBroker;
 using MailKit.Security;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
@@ -38,7 +37,7 @@ namespace Application.Services.Implementations.RabbitMQMessageBrokerService
         {
             _emailService = emailService;
             _rabbitMQMessageBroker = rabbitMQMessageBroker.Value;
-            _connection = rabbitMQConfig.CreateChannel(true);
+            _connection = rabbitMQConfig.CreateRabbitMQConnection(true);
             _logger = logger;
             _sender = sender.Value;
         }
@@ -58,7 +57,7 @@ namespace Application.Services.Implementations.RabbitMQMessageBrokerService
                         var body = eventArgs.Body.ToArray();
                         var message = Encoding.UTF8.GetString(body);
                         var verificationPayload = JsonConvert.DeserializeObject<Notification<EmailRequest>>(message);
-                        HandleMessage(verificationPayload);
+                        await HandleMessage(verificationPayload);
                         channel.BasicAck(eventArgs.DeliveryTag, false);
                         _logger.LogInformation($"Message sent to: {verificationPayload.Data.ReceiverEmail}");
                     //}

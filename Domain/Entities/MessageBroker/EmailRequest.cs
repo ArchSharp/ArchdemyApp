@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Identity.Data.Dtos.Request.MessageBroker
+namespace Domain.Entities
 {
     public class EmailRequest
     {

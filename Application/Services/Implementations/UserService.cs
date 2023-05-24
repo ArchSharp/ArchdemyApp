@@ -75,7 +75,6 @@ namespace Application.Services.Implementations
             //{5} : Message  
             //{6} : callbackURL
 
-
             var newUser = _mapper.Map<User>(model);
             newUser.VerificationToken= emailVerifyToken;
 

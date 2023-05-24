@@ -10,6 +10,6 @@ namespace Application.Services.MessageBrokerConfig
 {
     public interface IRabbitMQConfig : IAutoDependencyService
     {
-        IConnection CreateChannel(bool async);
+        IConnection CreateRabbitMQConnection(bool async);
     }
 }

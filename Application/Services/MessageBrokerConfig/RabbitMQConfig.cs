@@ -20,7 +20,7 @@ namespace Application.Services.MessageBrokerConfig
             _rabbitMQMessageBroker = rabbitMQMessageBroker.Value;
         }
 
-        public IConnection CreateChannel(bool async)
+        public IConnection CreateRabbitMQConnection(bool async)
         {
             _logger.LogInformation("Connecting to RabbitMQ");
             ConnectionFactory factory = new()

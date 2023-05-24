@@ -3,7 +3,6 @@ using System.Web;
 using Application.Services.Interfaces;
 using Application.Services.Interfaces.IRabbitMQMessageBroker;
 using Domain.Entities;
-using Identity.Data.Dtos.Request.MessageBroker;
 using Microsoft.Extensions.Options;
 
 namespace Application.Services.Implementations

@@ -1,7 +1,6 @@
 ﻿using Application.Services.Interfaces.IRabbitMQMessageBroker;
 using Application.Services.MessageBrokerConfig;
 using Domain.Entities;
-using Identity.Data.Dtos.Request.MessageBroker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -21,7 +20,7 @@ namespace Application.Services.Implementations.RabbitMQMessageBrokerService
             IRabbitMQConfig rabbitMQConfig,
             IOptions<RabbitMQMessageBroker> rabbitMQMessageBroker)
         {
-            _connection = rabbitMQConfig.CreateChannel(false);
+            _connection = rabbitMQConfig.CreateRabbitMQConnection(false);
             _logger = logger;
             _rabbitMQMessageBroker = rabbitMQMessageBroker.Value;
         }
