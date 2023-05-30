@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230513003333_firstGration")]
-    partial class firstGration
+    [Migration("20230530141737_createdb")]
+    partial class createdb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,15 +39,17 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("CategoryId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("ContentVolume")
                         .HasColumnType("integer");
 
                     b.Property<long>("Cost")
                         .HasColumnType("bigint");
+
+                    b.Property<Guid?>("CourseCategoryCategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -74,7 +76,28 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("CourseId");
 
+                    b.HasIndex("CourseCategoryCategoryId");
+
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CourseCategory", b =>
+                {
+                    b.Property<Guid>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("CourseCategories");
                 });
 
             modelBuilder.Entity("Domain.Entities.CourseModule", b =>
@@ -177,7 +200,7 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool?>("IsInstructor")
+                    b.Property<bool>("IsInstructor")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsTwoFactorEnabled")
@@ -229,6 +252,13 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Course", b =>
+                {
+                    b.HasOne("Domain.Entities.CourseCategory", null)
+                        .WithMany("Courses")
+                        .HasForeignKey("CourseCategoryCategoryId");
+                });
+
             modelBuilder.Entity("Domain.Entities.CourseModule", b =>
                 {
                     b.HasOne("Domain.Entities.Course", "Course")
@@ -254,6 +284,11 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Domain.Entities.Course", b =>
                 {
                     b.Navigation("CourseModules");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CourseCategory", b =>
+                {
+                    b.Navigation("Courses");
                 });
 
             modelBuilder.Entity("Domain.Entities.CourseModule", b =>

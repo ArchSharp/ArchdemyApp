@@ -1,4 +1,4 @@
-using Domain.Entities;
+using Domain.Entities.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

@@ -13,8 +13,8 @@ namespace Application.Services.Interfaces
 {
     public interface IUserService : IAutoDependencyService
     {
-        Task<SuccessResponse<CreateUserDto>> Register(CreateUserDto model);
-        Task<SuccessResponse<CreateUserDto>> Login(LoginUserDto model);
+        Task<SuccessResponse<GetUserDto>> Register(CreateUserDto model);
+        Task<SuccessResponse<GetUserDto>> Login(LoginUserDto model);
         Task<SuccessResponse<ForgotPasswordDto>> ForgotPassword(ForgotPasswordDto model);
         Task<SuccessResponse<CreateUserDto>> ResetPassword(ResetPasswordDto model);
         Task<SuccessResponse<CreateUserDto>> ChangePassword(ChangePasswordDto model);

@@ -37,6 +37,21 @@ namespace API.Controllers
         }
 
         /// <summary>
+        /// Endpoint to create a new course category
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Route("NewCategory")]
+        [ProducesResponseType(typeof(SuccessResponse<CreateCategoryDTO>), 200)]
+        public async Task<IActionResult> CreateCourseCategory([FromBody] CreateCategoryDTO model)
+        {
+            var response = await _courseService.CreateCourseCategory(model);
+
+            return Ok(response);
+        }
+
+        /// <summary>
         /// Endpoint to get course by course id
         /// </summary>
         /// <param name="id"></param>
@@ -52,6 +67,36 @@ namespace API.Controllers
         }
 
         /// <summary>
+        /// Endpoint to get course category by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet()]
+        [Route("GetCourseCategoryById")]
+        [ProducesResponseType(typeof(SuccessResponse<GetCategoryDTO>), 200)]
+        public async Task<IActionResult> GetCourseCategoryById([FromQuery] Guid id)
+        {
+            var response = await _courseService.GetCategory(id);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Endpoint to get all course categories by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet()]
+        [Route("GetAllCourseCategoryById")]
+        [ProducesResponseType(typeof(SuccessResponse<ICollection<GetCategoryDTO>>), 200)]
+        public async Task<IActionResult> GetAllCourseCategoryById()
+        {
+            var response = await _courseService.GetAllCategories();
+
+            return Ok(response);
+        }
+
+        /// <summary>
         /// Endpoint to get course by course categoryId
         /// </summary>
         /// <param name="CategoryId"></param>
@@ -59,7 +104,7 @@ namespace API.Controllers
         [HttpGet()]
         [Route("GetCourseByCategoryId")]
         [ProducesResponseType(typeof(SuccessResponse<ICollection<CategoryCoursesDto>>), 200)]
-        public async Task<IActionResult> GetCoursesByCategoryId([FromQuery] string CategoryId)
+        public async Task<IActionResult> GetCoursesByCategoryId([FromQuery] Guid CategoryId)
         {
             var response = await _courseService.GetCoursesByCategoryId(CategoryId);
 

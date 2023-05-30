@@ -26,6 +26,29 @@ namespace Application.DTOs
         //public IFormFile Image { get; set; }
     }
 
+    public class GetUserDto
+    {
+        public Guid Id { get; set; }
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string Street { get; set; } = null!;
+        public string City { get; set; } = null!;
+        public string State { get; set; } = null!;
+        public string Country { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
+        public string Password { get; set; } = null!;
+        public bool EmailConfirmed { get; set; }
+        public bool IsTwoFactorEnabled { get; set; }
+        //[FileMaxResolutionAttributes(1)]
+        //[FileAllowedExtensionsAttributes(new string[] {".jpg",".png","jpeg"})]
+        //public IFormFile? Image { get; set; }
+        public bool IsInstructor { get; set; }
+        public List<string>? CartCourses { get; set; }
+        public List<string>? PurchasedCourses { get; set; } 
+        public DateTime CreatedAt { get; set; }
+    }
+
     public class UpdateUserDto
     {
         public string? FirstName { get; set; }

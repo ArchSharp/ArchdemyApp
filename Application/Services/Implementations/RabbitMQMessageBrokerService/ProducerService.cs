@@ -1,6 +1,6 @@
 ﻿using Application.Services.Interfaces.IRabbitMQMessageBroker;
 using Application.Services.MessageBrokerConfig;
-using Domain.Entities;
+using Domain.Entities.Configurations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;

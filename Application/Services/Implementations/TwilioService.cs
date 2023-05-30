@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Options;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
-using Identity.Data.Models;
 using Twilio.Types;
 using System.Threading.Tasks;
 using Application.Helpers;
 using Application.DTOs;
 using Domain.Common;
 using Application.Services.Interfaces;
+using Domain.Entities.Configurations;
 
 namespace Application.Services.Implementations
 {

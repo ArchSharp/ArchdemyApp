@@ -15,6 +15,7 @@ using RabbitMQ.Client.Events;
 using MailKit.Net.Smtp;
 using Application.DTOs;
 using Application.Services.Interfaces;
+using Domain.Entities.Configurations;
 
 namespace Application.Services.Implementations.RabbitMQMessageBrokerService
 {
@@ -57,7 +58,7 @@ namespace Application.Services.Implementations.RabbitMQMessageBrokerService
                         var body = eventArgs.Body.ToArray();
                         var message = Encoding.UTF8.GetString(body);
                         var verificationPayload = JsonConvert.DeserializeObject<Notification<EmailRequest>>(message);
-                        await HandleMessage(verificationPayload);
+                        HandleMessage(verificationPayload);
                         channel.BasicAck(eventArgs.DeliveryTag, false);
                         _logger.LogInformation($"Message sent to: {verificationPayload.Data.ReceiverEmail}");
                     //}
@@ -69,7 +70,7 @@ namespace Application.Services.Implementations.RabbitMQMessageBrokerService
                     
                     // Requeue the failed message
                     channel.BasicNack(deliveryTag: eventArgs.DeliveryTag, multiple: false, requeue: true);
-                    _logger.LogInformation($"Failed message requeued successfully.");
+                    _logger.LogInformation($"Message is back to the queue.");
                 }                
             };
             channel.BasicConsume(queue, false, consumer);

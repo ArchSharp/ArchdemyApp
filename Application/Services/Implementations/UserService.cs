@@ -53,7 +53,7 @@ namespace Application.Services.Implementations
             _notificationService = notificationService;
             _twoFactorAuthService = twoFactorAuthService;
         }
-        public async Task<SuccessResponse<CreateUserDto>> Register(CreateUserDto model)
+        public async Task<SuccessResponse<GetUserDto>> Register(CreateUserDto model)
         {
             var findUser = await _userRepository.FirstOrDefault(x => x.Email == model.Email);
 
@@ -63,17 +63,7 @@ namespace Application.Services.Implementations
             string hashPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
             model.Password = hashPassword;
 
-            var emailVerifyToken = CreateRandomToken();
-
-            //Console.WriteLine($"image path: {_emailService.ImageCID("mail", "png")}");
-
-            //{0} : Subject  
-            //{1} : DateTime  
-            //{2} : Email  
-            //{3} : Username  
-            //{4} : Password  
-            //{5} : Message  
-            //{6} : callbackURL
+            var emailVerifyToken = CreateRandomToken();            
 
             var newUser = _mapper.Map<User>(model);
             newUser.VerificationToken= emailVerifyToken;
@@ -81,11 +71,10 @@ namespace Application.Services.Implementations
             await _userRepository.AddAsync(newUser);
             await _userRepository.SaveChangesAsync();
 
-            //SendMailToUser(newUser, emailVerifyToken);
             _notificationService.SendVerificationEmail(newUser.Email, newUser.LastName, emailVerifyToken);
-            var newUserResponse = _mapper.Map<CreateUserDto>(newUser);
+            var newUserResponse = _mapper.Map<GetUserDto>(newUser);
 
-            return new SuccessResponse<CreateUserDto>
+            return new SuccessResponse<GetUserDto>
             {
                 Data = newUserResponse,
                 code = 201,
@@ -93,7 +82,7 @@ namespace Application.Services.Implementations
                 ExtraInfo = "",
             };
         }
-        public async Task<SuccessResponse<CreateUserDto>> Login(LoginUserDto model)
+        public async Task<SuccessResponse<GetUserDto>> Login(LoginUserDto model)
         {
             var findUser = await _userRepository.FirstOrDefault(x=>x.Email== model.Email);
 
@@ -139,9 +128,9 @@ namespace Application.Services.Implementations
                 }                
             }
 
-            var userResponse = _mapper.Map<CreateUserDto>(findUser);
+            var userResponse = _mapper.Map<GetUserDto>(findUser);
 
-            return new SuccessResponse<CreateUserDto>
+            return new SuccessResponse<GetUserDto>
             {
                 Data = userResponse,
                 code = 200,

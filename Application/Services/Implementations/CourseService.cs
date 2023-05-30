@@ -12,7 +12,10 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Stripe;
 
 namespace Application.Services.Implementations
 {
@@ -20,15 +23,28 @@ namespace Application.Services.Implementations
     {
         private readonly IRepository<Course> _courseRepository;
         private readonly IRepository<User> _userRepository;
+        private readonly IRepository<CourseCategory> _categoryRepository;
         private readonly IMapper _mapper;
-        public CourseService(IRepository<Course> courseRepository, IMapper mapper, IRepository<User> userRepository)
+
+        private readonly JsonSerializerOptions options = new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.Preserve,
+            WriteIndented = true // Optional: for pretty-printing the JSON output
+        };
+        public CourseService(
+            IRepository<Course> courseRepository,
+            IMapper mapper,
+            IRepository<User> userRepository,
+            IRepository<CourseCategory> categoryRepository
+        )
         {
             _courseRepository = courseRepository;
             _mapper = mapper;
             _userRepository = userRepository;
+            _categoryRepository = categoryRepository;
         }
 
-        public async Task<SuccessResponse<CreateCourseDto>> CreateCourse(CreateCourseDto model)
+        public async Task<SuccessResponse<GetCourseDto>> CreateCourse(CreateCourseDto model)
         {
             var getUser = await _userRepository.FirstOrDefault(x => x.Id == model.AuthorId);
             var newCourse = _mapper.Map<Course>(model);
@@ -45,14 +61,51 @@ namespace Application.Services.Implementations
                 await _userRepository.SaveChangesAsync();
             }
 
-            var newCourseResponse = _mapper.Map<CreateCourseDto>(newCourse);
+            var newCourseResponse = _mapper.Map<GetCourseDto>(newCourse);
 
-            return new SuccessResponse<CreateCourseDto>
+            return new SuccessResponse<GetCourseDto>
             {
                 Data = newCourseResponse,
                 code = 201,
                 Message = ResponseMessages.NewCourseCreated,
                 ExtraInfo = "",
+            };
+        }
+
+        public async Task<SuccessResponse<GetCategoryDTO>> CreateCourseCategory(CreateCategoryDTO model)
+        {
+            var findCategory = await _categoryRepository.FirstOrDefault(x => x.Name == model.Name);
+            var newCategory = _mapper.Map<CourseCategory>(model);
+
+            if (findCategory != null)
+                throw new RestException(HttpStatusCode.NotFound, ResponseMessages.CategoryAlreadyExist);
+
+            await _categoryRepository.AddAsync(newCategory);
+            await _courseRepository.SaveChangesAsync();
+
+            var newCourseResponse = _mapper.Map<GetCategoryDTO>(newCategory);
+
+            return new SuccessResponse<GetCategoryDTO>
+            {
+                Data = newCourseResponse,
+                code = 201,
+                Message = ResponseMessages.NewCourseCreated,
+                ExtraInfo = "",
+            };
+        }
+
+        public async Task<SuccessResponse<ICollection<GetAllCategoryDTO>>> GetAllCategories()
+        {
+            var allCourse = await _categoryRepository.GetAllAsync();
+
+            var courseResponse = _mapper.Map<ICollection<GetAllCategoryDTO>>(allCourse);
+
+            return new SuccessResponse<ICollection<GetAllCategoryDTO>>
+            {
+                Data = courseResponse,
+                code = 201,
+                Message = ResponseMessages.CategoriesFetched,
+                ExtraInfo = courseResponse.Count() + " records fetched",
             };
         }
 
@@ -73,14 +126,13 @@ namespace Application.Services.Implementations
 
         public async Task<SuccessResponse<GetCourseDto>> GetCourseByCourseId(Guid id)
         {
-            //var findCourse = await _courseRepository.FirstOrDefault(x => x.courseId == id);
             var findCourse = await _courseRepository.GetByIdAsync(id);
 
             if (findCourse == null)
                 throw new RestException(HttpStatusCode.NotFound, ResponseMessages.CourseNotFound);
 
             var courseResponse = _mapper.Map<GetCourseDto>(findCourse);
-
+                        
             return new SuccessResponse<GetCourseDto>
             {
                 Data = courseResponse,
@@ -90,7 +142,34 @@ namespace Application.Services.Implementations
             };
         }
 
-        public async Task<SuccessResponse<ICollection<CategoryCoursesDto>>> GetCoursesByCategoryId(string CategoryId)
+        public async Task<SuccessResponse<GetCategoryDTO>> GetCategory(Guid categoryId)
+        {
+            var findCategory = await _categoryRepository.FirstOrDefault(x => x.CategoryId == categoryId);
+            
+            if (findCategory == null)
+                throw new RestException(HttpStatusCode.NotFound, ResponseMessages.CategoryNotFound);            
+
+            var newCourseResponse = _mapper.Map<GetCategoryDTO>(findCategory);
+
+            var getCoursesInCategory = await _courseRepository.FindAsync(x => x.CategoryId == categoryId);
+                        
+            foreach (var item in getCoursesInCategory)
+            {
+                //var json = JsonSerializer.Serialize(item, options);
+                var courseDto = _mapper.Map<GetCourseDto>(item);
+                newCourseResponse.Courses.Add(courseDto);
+            }
+
+            return new SuccessResponse<GetCategoryDTO>
+            {
+                Data = newCourseResponse,
+                code = 201,
+                Message = ResponseMessages.NewCourseCreated,
+                ExtraInfo = "",
+            };
+        }
+
+        public async Task<SuccessResponse<ICollection<CategoryCoursesDto>>> GetCoursesByCategoryId(Guid CategoryId)
         {
             var findCourse = await _courseRepository.FindAsync(x => x.CategoryId == CategoryId);
 

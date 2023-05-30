@@ -32,5 +32,8 @@ namespace Domain.Common
         public const string FetchedSuccesss = " fetched successfully";
         public const string CourseModuleNotFound = "Course module not found";
         public const string TwilioSMSFailed = "Failed to send OTP!";
+        public const string CategoryAlreadyExist = "Category already exist";
+        public const string CategoryNotFound = "Category not found";
+        public const string CategoriesFetched = "Category fetched successfully";
     }
 }

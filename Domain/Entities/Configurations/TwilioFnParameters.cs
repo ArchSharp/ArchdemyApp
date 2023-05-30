@@ -1,4 +1,4 @@
-﻿namespace Identity.Data.Models
+﻿namespace Domain.Entities.Configurations
 {
     public class TwilioFnParameters
     {

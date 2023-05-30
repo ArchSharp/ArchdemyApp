@@ -35,5 +35,6 @@ namespace Infrastructure.Data
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseModule> CoursesModules { get; set;}
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<CourseCategory> CourseCategories { get; set; }
     }
 }

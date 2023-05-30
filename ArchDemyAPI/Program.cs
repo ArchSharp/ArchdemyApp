@@ -4,7 +4,6 @@ using Application.Services.Implementations;
 using Application.Services.Interfaces;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Domain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +16,8 @@ using Domain.Entities.Token;
 using Domain.Entities.Stripe;
 using Domain.Entities.PayStack;
 using System.Threading.RateLimiting;
-using Identity.Data.Models;
 using SendGrid.Extensions.DependencyInjection;
+using Domain.Entities.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 

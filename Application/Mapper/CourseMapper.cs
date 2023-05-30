@@ -14,6 +14,9 @@ namespace Application.Mapper
         public CourseMapper()
         {
             CreateMap<Course, CreateCourseDto>().ReverseMap();
+            CreateMap<CourseCategory, CreateCategoryDTO>().ReverseMap();
+            CreateMap<CourseCategory, GetCategoryDTO>().ReverseMap();
+            CreateMap<CourseCategory, GetAllCategoryDTO>().ReverseMap();
             CreateMap<Course, GetCourseDto>();
             CreateMap<Course, CategoryCoursesDto>();
             CreateMap<Course, UpdateCourseDto>().ReverseMap();

@@ -21,6 +21,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Net;
 using static QRCoder.PayloadGenerator;
 using MailKit.Net.Smtp;
+using Domain.Entities.Configurations;
 
 namespace Application.Services.Implementations
 {

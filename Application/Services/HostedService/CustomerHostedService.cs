@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Services.Interfaces.IRabbitMQMessageBroker;
-using Domain.Entities;
+using Domain.Entities.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
