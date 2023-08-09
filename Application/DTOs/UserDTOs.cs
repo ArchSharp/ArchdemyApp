@@ -21,6 +21,7 @@ namespace Application.DTOs
         public string Country { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;
         public string Password { get; set; } = null!;
+        public string ZipCode { get; set; } = null!;
         //[FileMaxResolutionAttributes(1)]
         //[FileAllowedExtensionsAttributes(new string[] { ".jpg", ".png", "jpeg" })]
         //public IFormFile Image { get; set; }
@@ -37,6 +38,7 @@ namespace Application.DTOs
         public string State { get; set; } = null!;
         public string Country { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;
+        public string ZipCode { get; set; } = null!;
         public string Password { get; set; } = null!;
         public bool EmailConfirmed { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
