@@ -28,7 +28,14 @@ namespace Application.DTOs
         public Guid CourseModuleId { get; set; }
         public Guid CourseId { get; set; }
         public string Name { get; set; } = null!;
-        public ICollection<TopicDto> Topics { get; set; } = null!;
+        public ICollection<GetTopicDto> Topics { get; set; } = null!;
+    }
+    public class GetTopicDto
+    {
+        public Guid TopicId { get; set; }
+        public string Author { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public string Url { get; set; } = null!;
     }
     /*
     public class GetCourseAllModules
@@ -38,7 +45,6 @@ namespace Application.DTOs
 
     public class TopicDto
     {
-        //public Guid Id { get; set; }
         public string Author { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string Url { get; set; } = null!;

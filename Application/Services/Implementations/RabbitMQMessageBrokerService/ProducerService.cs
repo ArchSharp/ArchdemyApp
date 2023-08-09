@@ -31,7 +31,7 @@ namespace Application.Services.Implementations.RabbitMQMessageBrokerService
             string exchange = _rabbitMQMessageBroker.QueueNotificationExchange;
             string routingKey = _rabbitMQMessageBroker.QueueNotificationRoutingKey;
             ConfigureChannel(channel, queue, exchange, routingKey);
-            channel.QueueDeclare(queue, false, false, false, null);
+            //channel.QueueDeclare(queue, false, false, false, null);
             string json = JsonConvert.SerializeObject(message);
             byte[] body = Encoding.UTF8.GetBytes(json);
             channel.BasicPublish(exchange, routingKey, body: body, basicProperties: ChannelProperties(channel));            

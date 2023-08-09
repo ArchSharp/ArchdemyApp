@@ -23,6 +23,7 @@ namespace Domain.Entities
         public int PurchaseNumber { get; set; }
         public int ModulesNumber { get; set; }
         public int ContentVolume { get; set; }
+        public bool IsGoLive { get; set; }
         public ICollection<CourseModule> CourseModules { get; set; } = null!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow.ToUniversalTime();
         public DateTime? UpdatedAt { get; set; } = DateTime.Now.ToUniversalTime();

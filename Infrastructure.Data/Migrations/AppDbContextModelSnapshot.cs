@@ -55,6 +55,9 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsGoLive")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsPremium")
                         .HasColumnType("boolean");
 
@@ -243,6 +246,10 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("VerifiedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

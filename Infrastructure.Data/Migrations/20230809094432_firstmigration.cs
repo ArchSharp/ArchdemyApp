@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class createdb : Migration
+    public partial class firstmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -55,6 +55,7 @@ namespace Infrastructure.Data.Migrations
                     Password = table.Column<string>(type: "text", nullable: false),
                     EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     IsTwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    ZipCode = table.Column<string>(type: "text", nullable: false),
                     IsInstructor = table.Column<bool>(type: "boolean", nullable: false),
                     CartCourses = table.Column<List<string>>(type: "text[]", nullable: true),
                     PurchasedCourses = table.Column<List<string>>(type: "text[]", nullable: true),
@@ -86,6 +87,7 @@ namespace Infrastructure.Data.Migrations
                     PurchaseNumber = table.Column<int>(type: "integer", nullable: false),
                     ModulesNumber = table.Column<int>(type: "integer", nullable: false),
                     ContentVolume = table.Column<int>(type: "integer", nullable: false),
+                    IsGoLive = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CourseCategoryCategoryId = table.Column<Guid>(type: "uuid", nullable: true)

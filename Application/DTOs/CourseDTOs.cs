@@ -20,6 +20,7 @@ namespace Application.DTOs
         public int PurchaseNumber { get; set; }
         public int ModulesNumber { get; set; }
         public int ContentVolume { get; set; }
+        public bool IsGoLive { get; set; }
     }
         
     public class GetCourseDto
@@ -35,6 +36,7 @@ namespace Application.DTOs
         public int PurchaseNumber { get; set; }
         public int ModulesNumber { get; set; }
         public int ContentVolume { get; set; }
+        public bool IsGoLive { get; set; }
         public DateTime CreatedAt { get; set; }
     }       
 
@@ -56,6 +58,7 @@ namespace Application.DTOs
         public int? PurchaseNumber { get; set; }
         public int? ModulesNumber { get; set; }
         public int? ContentVolume { get; set; }
+        public bool IsGoLive { get; set; }
     }
 
     public class CoursePaymentPayloadDto

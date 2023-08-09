@@ -26,6 +26,7 @@ namespace Domain.Entities
         public string Password { get; set; } = null!;
         public bool EmailConfirmed { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
+        public string ZipCode { get; set; }
         //[FileMaxResolutionAttributes(1)]
         //[FileAllowedExtensionsAttributes(new string[] {".jpg",".png","jpeg"})]
         //public IFormFile? Image { get; set; }
